@@ -1,4 +1,4 @@
-# Kent Gale Systems Documentation
+# Kent Gale Automation Documentation
 
 *Comprehensive documentation for personal and business systems automation*
 
