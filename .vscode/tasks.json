@@ -1,0 +1,34 @@
+{
+  // VS Code tasks to install/run ECI workers quickly.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ECI: Install mac worker → ~/bin/claim_and_run.sh",
+      "type": "shell",
+      "command": "mkdir -p \"$HOME/bin\" && cp \"${workspaceFolder}/scripts/templates/eci_mac_claim_and_run.sh\" \"$HOME/bin/claim_and_run.sh\" && chmod +x \"$HOME/bin/claim_and_run.sh\" && echo 'Installed to ~/bin/claim_and_run.sh'"
+    },
+    {
+      "label": "ECI: Run mac worker",
+      "type": "shell",
+      "command": "~/bin/claim_and_run.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "ECI: Install Windows worker → Dropbox",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Copy-Item -Force '${workspaceFolder}\\scripts\\templates\\eci_win_Claim-And-Run.ps1' \"$env:USERPROFILE\\Dropbox\\Automation\\.queue\\Claim-And-Run.ps1\"; Write-Host 'Installed to Dropbox\\Automation\\.queue\\Claim-And-Run.ps1'\"",
+      "options": { "shell": { "executable": "pwsh", "args": ["-c"] } },
+      "windows": {
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Copy-Item -Force '${workspaceFolder}\\scripts\\templates\\eci_win_Claim-And-Run.ps1' \"$env:USERPROFILE\\Dropbox\\Automation\\.queue\\Claim-And-Run.ps1\"; Write-Host 'Installed to Dropbox\\Automation\\.queue\\Claim-And-Run.ps1'\""
+      }
+    },
+    {
+      "label": "ECI: Run Windows worker",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:USERPROFILE\\Dropbox\\Automation\\.queue\\Claim-And-Run.ps1\"",
+      "windows": {
+        "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:USERPROFILE\\Dropbox\\Automation\\.queue\\Claim-And-Run.ps1\""
+      }
+    }
+  ]
+}
