@@ -1,0 +1,14 @@
+[
+    {
+        "key": "cmd+shift+d",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Quick Deploy (Skip Git)",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "cmd+shift+p",
+        "command": "workbench.action.tasks.runTask", 
+        "args": "Complete Deployment Workflow",
+        "when": "editorTextFocus"
+    }
+]
