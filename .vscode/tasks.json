@@ -1,5 +1,5 @@
 {
-  // VS Code tasks to install/run ECI workers quickly.
+  // VS Code tasks combining ECI workers and deployment workflows
   "version": "2.0.0",
   "tasks": [
     {
@@ -29,6 +29,118 @@
       "windows": {
         "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:USERPROFILE\\Dropbox\\Automation\\.queue\\Claim-And-Run.ps1\""
       }
+    },
+    {
+      "label": "Deploy to Dropbox",
+      "type": "shell",
+      "command": "./deploy-to-dropbox.sh",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Git: Add All",
+      "type": "shell",
+      "command": "git",
+      "args": ["add", "."],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Git: Commit with Message",
+      "type": "shell",
+      "command": "git",
+      "args": ["commit", "-m", "${input:commitMessage}"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "dependsOn": "Git: Add All"
+    },
+    {
+      "label": "Git: Push to Origin",
+      "type": "shell",
+      "command": "git",
+      "args": ["push", "origin", "main"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "Complete Deployment Workflow",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Git: Commit with Message",
+        "Git: Push to Origin",
+        "Deploy to Dropbox"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Quick Deploy (Skip Git)",
+      "type": "shell",
+      "command": "./deploy-to-dropbox.sh",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "commitMessage",
+      "description": "Enter commit message",
+      "default": "Update documentation and configurations",
+      "type": "promptString"
     }
   ]
 }
