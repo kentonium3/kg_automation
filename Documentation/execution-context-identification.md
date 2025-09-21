@@ -8,9 +8,9 @@
 - Jobs specify `requested_executor` as machine IDs and/or capability labels.
 
 ## Local beacons (keep private)
-- **Windows:** `C:\temp\MACHINE_ID_<NAME>.txt`
-- **macOS:** `~/Library/Application Support/KG/MACHINE_ID_<NAME>.txt`
-- Optional env var: `KG_PLATFORM=<NAME>`
+- **Windows:** `C:\temp\MACHINE_ID_<n>.txt`
+- **macOS:** `~/Library/Application Support/KG/MACHINE_ID_<n>.txt`
+- Optional env var: `KG_PLATFORM=<n>`
 - Policy: Machine ID files must **not** live in Dropbox (avoid cross-system confusion). See Machine ID policy in the migration docs. 
 
 ## Worker matching (summary)
