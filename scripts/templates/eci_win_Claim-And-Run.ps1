@@ -1,51 +1,78 @@
-﻿# eci_win_Claim-And-Run.ps1 â€” Template (copy to Dropbox\Automation\.queue\Claim-And-Run.ps1)
+# eci_win_Claim-And-Run.ps1 — Template (copy to Scripts folder in PATH)
 # Purpose: Minimal ECI worker for Windows. Claims only jobs targeted to this machine.
 # Identity source: C:\temp\MACHINE_ID.txt (first non-empty line).
+
 param(
-  [string]$QueueRoot = (Join-Path $env:USERPROFILE 'Dropbox\Automation\.queue')
+    [string]$QueueRoot = ""
 )
 
-# 1) Determine local machine_id (from MACHINE_ID.txt, then env, then hostname)
-$idFile = 'C:\temp\MACHINE_ID.txt'
-if (Test-Path $idFile) {
-    $machineId = Get-Content $idFile | Where-Object { $_.Trim() -ne "" } | Select-Object -First 1
-    $machineId = $machineId.Trim()
-} else {
-    $machineId = $env:KG_PLATFORM
-    if (-not $machineId -or $machineId -eq '') { $machineId = $env:COMPUTERNAME }
+# Canonical roots (Windows)
+$DropboxRoot = "$env:USERPROFILE\Dropbox"
+$AutomationRoot = "$DropboxRoot\Automation"
+# Global queue (cross-project)
+if (-not $QueueRoot) {
+    $QueueRoot = "$AutomationRoot\.queue"
 }
 
-$inbox   = Join-Path $QueueRoot 'inbox'
-$claimed = Join-Path $QueueRoot 'claimed'
-$done    = Join-Path $QueueRoot 'done'
-$events  = Join-Path $QueueRoot 'events'
-New-Item -ItemType Directory -Force -Path $claimed,$done,$events | Out-Null
+# 1) Determine local machine_id (local-only; never in Dropbox)
+$IdFile = "C:\temp\MACHINE_ID.txt"
+if (Test-Path $IdFile) {
+    $MachineId = (Get-Content $IdFile | Where-Object { $_.Trim() -ne "" } | Select-Object -First 1).Trim()
+} else {
+    $MachineId = if ($env:KG_PLATFORM) { $env:KG_PLATFORM } else { $env:COMPUTERNAME }
+}
+
+$Inbox = "$QueueRoot\inbox"
+$Claimed = "$QueueRoot\claimed"
+$Done = "$QueueRoot\done"
+$Events = "$QueueRoot\events"
+
+# Ensure directories exist
+@($Claimed, $Done, $Events) | ForEach-Object {
+    if (-not (Test-Path $_)) {
+        New-Item -ItemType Directory -Path $_ -Force | Out-Null
+    }
+}
 
 # 2) First job in inbox
-$jobFile = Get-ChildItem -Path $inbox -Filter '*.json' -ErrorAction SilentlyContinue | Select-Object -First 1
-if (-not $jobFile) { Write-Host "No jobs."; exit 0 }
-
-# 3) Check targeting
-try {
-  $job = Get-Content $jobFile.FullName -Raw | ConvertFrom-Json
-} catch {
-  Write-Warning "Bad JSON: $($jobFile.Name) â€” skipping."
-  exit 0
+$JobFile = Get-ChildItem -Path "$Inbox\*.json" -ErrorAction SilentlyContinue | Select-Object -First 1
+if (-not $JobFile) {
+    Write-Host "No jobs."
+    exit 0
 }
-$targets = @()
-if ($job.PSObject.Properties.Name -contains 'requested_executor') { $targets = $job.requested_executor }
-$eligible = ($targets.Count -eq 0) -or ($targets -contains $machineId)
-if (-not $eligible) { Write-Host "Skipping (not targeted for $machineId): $($job.id)"; exit 0 }
+
+# 3) Check targeting (reads requested_executor array)
+$JobContent = Get-Content -Path $JobFile.FullName -Raw | ConvertFrom-Json
+$Targets = $JobContent.requested_executor
+
+$Eligible = $false
+if (-not $Targets -or $Targets.Count -eq 0) {
+    $Eligible = $true
+} else {
+    foreach ($Target in $Targets) {
+        if ($Target -eq $MachineId) {
+            $Eligible = $true
+            break
+        }
+    }
+}
+
+if (-not $Eligible) {
+    Write-Host "Skipping job (not targeted for $MachineId): $($JobFile.BaseName)"
+    exit 0
+}
 
 # 4) Claim & minimal work
-$base = $jobFile.Name
-$claimedPath = Join-Path $claimed $base
-Move-Item -Path $jobFile.FullName -Destination $claimedPath -Force
+$Base = $JobFile.Name
+$Timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
-$evt = Join-Path $events ($job.id + '.log')
-"$(Get-Date -AsUTC -Format o)  CLAIM  $machineId" | Out-File -Append $evt -Encoding utf8
+Move-Item -Path $JobFile.FullName -Destination "$Claimed\$Base"
+Add-Content -Path "$Events\$($JobFile.BaseName).log" -Value "$Timestamp  CLAIM  $MachineId"
+
 Start-Sleep -Seconds 2
-"$(Get-Date -AsUTC -Format o)  DONE   $machineId"  | Out-File -Append $evt -Encoding utf8
-Move-Item -Path $claimedPath -Destination (Join-Path $done $base) -Force
-Write-Host "Job completed: $($job.id) on $machineId"
 
+$Timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+Add-Content -Path "$Events\$($JobFile.BaseName).log" -Value "$Timestamp  DONE   $MachineId"
+Move-Item -Path "$Claimed\$Base" -Destination "$Done\$Base"
+
+Write-Host "Job completed: $($JobFile.BaseName) on $MachineId"

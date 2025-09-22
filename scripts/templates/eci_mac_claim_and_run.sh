@@ -4,9 +4,11 @@
 # Identity source: ~/Library/Application Support/KG/MACHINE_ID.txt (first non-empty line).
 set -euo pipefail
 
-# Prefer CloudStorage path; fallback to legacy ~/Dropbox
-QUEUE_ROOT="${1:-$HOME/Library/CloudStorage/Dropbox/Automation/.queue}"
-[ -d "$QUEUE_ROOT" ] || QUEUE_ROOT="$HOME/Dropbox/Automation/.queue"
+# Canonical roots (macOS)
+DROPBOX_ROOT="$HOME/Library/CloudStorage/Dropbox"
+AUTOMATION_ROOT="$DROPBOX_ROOT/Automation"
+# Global queue (cross-project)
+QUEUE_ROOT="${1:-$AUTOMATION_ROOT/.queue}"
 
 # 1) Determine local machine_id (local-only; never in Dropbox)
 id_file="$HOME/Library/Application Support/KG/MACHINE_ID.txt"

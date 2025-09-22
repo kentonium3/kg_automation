@@ -5,8 +5,8 @@
 ## File Location Strategy - CRITICAL
 
 ### **For Reading Context (All AIs)**
-- **Location**: Dropbox paths (e.g., `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/`)
-- **Purpose**: Read-only reference for understanding project state
+- **Global Location**: Dropbox Automation root (for bootstrap and shared resources)
+- **Project Location**: Dropbox kg-automation subdirectory (for project documentation)
 - **Status**: Deployed files, updated after Git commits
 
 ### **For Making Changes (Mac/Windows only)**
@@ -32,25 +32,67 @@
 - Understanding of current working directory and file paths
 - Capability to handle requested tasks on current platform
 
+## Canonical Paths by Platform
+
+### **Mac Platform:**
+```bash
+# Canonical roots
+DROPBOX_ROOT="$HOME/Library/CloudStorage/Dropbox"
+AUTOMATION_ROOT="$DROPBOX_ROOT/Automation"
+PROJECT_ROOT="$AUTOMATION_ROOT/kg-automation"
+
+# Global resources (cross-project)
+QUEUE_ROOT="$AUTOMATION_ROOT/.queue"
+STATE_ROOT="$AUTOMATION_ROOT/.state"
+BOOTSTRAP="$AUTOMATION_ROOT/ai-agents/ai-context-bootstrap.md"
+
+# Project-specific documentation
+PROJECT_DOCS="$PROJECT_ROOT/Documentation"
+PROJECT_AI="$PROJECT_ROOT/ai-agents"
+PROJECT_SYSTEMS="$PROJECT_ROOT/systems"
+PROJECT_RUNBOOKS="$PROJECT_ROOT/runbooks"
+PROJECT_WORKFLOWS="$PROJECT_ROOT/workflows"
+```
+
+### **Windows Platform:**
+```powershell
+# Canonical roots
+$DropboxRoot = "$env:USERPROFILE\Dropbox"
+$AutomationRoot = "$DropboxRoot\Automation"  
+$ProjectRoot = "$AutomationRoot\kg-automation"
+
+# Global resources (cross-project)
+$QueueRoot = "$AutomationRoot\.queue"
+$StateRoot = "$AutomationRoot\.state"
+$Bootstrap = "$AutomationRoot\ai-agents\ai-context-bootstrap.md"
+
+# Project-specific documentation
+$ProjectDocs = "$ProjectRoot\Documentation"
+$ProjectAI = "$ProjectRoot\ai-agents"  
+$ProjectSystems = "$ProjectRoot\systems"
+$ProjectRunbooks = "$ProjectRoot\runbooks"
+$ProjectWorkflows = "$ProjectRoot\workflows"
+```
+
 ## Mandatory Context Documents
 
-**Read from Dropbox deployment location for current context:**
+**Read from Dropbox deployment locations:**
 
-### **Mac Platform Paths:**
-1. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/systems/integration-architecture.md` — complete systems overview
-2. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/ai-agents/ai-collaboration-standards.md` — AI behavior standards
-3. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/ai-agents/platform-capability-matrix.md` — AI capabilities by device
-4. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/runbooks/session-continuity.md` — recovery procedures if context is lost
-5. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/Documentation/execution-context-identification.md` — ECI (local-only machine identity on each device)
-6. `/Users/kentgale/Library/CloudStorage/Dropbox/Automation/Documentation/diagrams/eci-sequence.mmd` — sequence diagram for ECI + job intake flow
+### **Mac Paths:**
+1. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/systems/integration-architecture.md` — complete systems overview
+2. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/ai-agents/ai-collaboration-standards.md` — AI behavior standards
+3. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/ai-agents/platform-capability-matrix.md` — AI capabilities by device
+4. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/runbooks/session-continuity.md` — recovery procedures if context is lost
+5. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/Documentation/execution-context-identification.md` — ECI (local-only machine identity on each device)
+6. `~/Library/CloudStorage/Dropbox/Automation/kg-automation/Documentation/diagrams/eci-sequence.mmd` — sequence diagram for ECI + job intake flow
 
-### **Windows Platform Paths:**
-1. `C:\Users\Kent\Dropbox\Automation\systems\integration-architecture.md`
-2. `C:\Users\Kent\Dropbox\Automation\ai-agents\ai-collaboration-standards.md`
-3. `C:\Users\Kent\Dropbox\Automation\ai-agents\platform-capability-matrix.md`
-4. `C:\Users\Kent\Dropbox\Automation\runbooks\session-continuity.md`
-5. `C:\Users\Kent\Dropbox\Automation\Documentation\execution-context-identification.md`
-6. `C:\Users\Kent\Dropbox\Automation\Documentation\diagrams\eci-sequence.mmd`
+### **Windows Paths:**
+1. `C:\Users\Kent\Dropbox\Automation\kg-automation\systems\integration-architecture.md`
+2. `C:\Users\Kent\Dropbox\Automation\kg-automation\ai-agents\ai-collaboration-standards.md`
+3. `C:\Users\Kent\Dropbox\Automation\kg-automation\ai-agents\platform-capability-matrix.md`
+4. `C:\Users\Kent\Dropbox\Automation\kg-automation\runbooks\session-continuity.md`
+5. `C:\Users\Kent\Dropbox\Automation\kg-automation\Documentation\execution-context-identification.md`
+6. `C:\Users\Kent\Dropbox\Automation\kg-automation\Documentation\diagrams\eci-sequence.mmd`
 
 ## Project State
 - Phase: Setup/Documentation
