@@ -33,7 +33,6 @@
     {
       "label": "Deploy to Dropbox",
       "type": "shell",
-      "command": "./deploy-to-dropbox.sh",
       "group": "build",
       "presentation": {
         "echo": true,
@@ -45,6 +44,16 @@
       },
       "options": {
         "cwd": "${workspaceFolder}"
+      },
+      "windows": {
+        "command": "powershell",
+        "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "./deploy-to-dropbox.ps1"]
+      },
+      "osx": {
+        "command": "./deploy-to-dropbox.sh"
+      },
+      "linux": {
+        "command": "./deploy-to-dropbox.sh"
       },
       "problemMatcher": []
     },
@@ -119,7 +128,6 @@
     {
       "label": "Quick Deploy (Skip Git)",
       "type": "shell",
-      "command": "./deploy-to-dropbox.sh",
       "group": "build",
       "presentation": {
         "echo": true,
@@ -131,6 +139,16 @@
       },
       "options": {
         "cwd": "${workspaceFolder}"
+      },
+      "windows": {
+        "command": "powershell",
+        "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "./deploy-to-dropbox.ps1"]
+      },
+      "osx": {
+        "command": "./deploy-to-dropbox.sh"
+      },
+      "linux": {
+        "command": "./deploy-to-dropbox.sh"
       },
       "problemMatcher": []
     }
