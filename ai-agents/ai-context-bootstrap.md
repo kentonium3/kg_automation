@@ -25,7 +25,7 @@
 
 ## Project State
 - Phase: Setup/Documentation
-- Repository: https://github.com/kentonium3/kg_automation.git
+- Repository: https://github.com/kentonium3/kg-automation.git
 - Status: Active development
 
 ---
