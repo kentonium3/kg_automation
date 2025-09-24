@@ -15,9 +15,10 @@
 3. ✅ Created kg-tasks.md template for tactical execution
 4. ✅ Created kg-tasks-completed.md for task history
 5. ✅ Created project-mgmt.md workflow for AI systems
+6. ✅ Implemented ChatGPT suggestions: blocker handling, status dashboard, roadmap cross-links
 
-**Time Invested**: ~45 minutes  
-**Lessons Learned**: Separating strategic and tactical planning improves focus
+**Time Invested**: ~60 minutes  
+**Lessons Learned**: Cross-AI validation improves system design; blocker handling prevents lost work
 
 ---
 
