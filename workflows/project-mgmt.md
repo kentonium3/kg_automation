@@ -34,7 +34,8 @@ Kent uses a two-tier project management system:
 ### Task: [Descriptive Name]
 **Status**: 🟢 **Priority**: [High/Medium/Low]  
 **Source**: [AI System] conversation - [Date] - [Brief context]  
-**Estimated Time**: [Time estimate]
+**Estimated Time**: [Time estimate]  
+**Related Roadmap Objective**: [Link to specific objective from project-roadmap.md]
 
 **Context**: [Why this task exists, what it accomplishes]
 
@@ -52,6 +53,13 @@ Kent uses a two-tier project management system:
 - 🔴 **Blocked**: Waiting on external dependencies
 - ✅ **Complete**: Task finished (move to kg-tasks-completed.md)
 - ❌ **Cancelled**: No longer needed
+
+#### Blocker Handling Protocol
+If Kent encounters a blocker during task execution:
+1. **Mark task 🔴 Blocked** immediately
+2. **Capture exact sub-step** where blocker occurred in task notes
+3. **Create temporary troubleshooting task** linked to parent task
+4. **Document blocker details** for resolution or escalation
 
 #### Priority Guidelines
 - **High**: Blocks other work or is time-sensitive
@@ -163,3 +171,4 @@ Use the "Standard Task Template" with clear step-by-step instructions
 
 ## Change Log
 - **2025-09-24**: Initial workflow documentation created
+- **2025-09-24**: Added blocker handling protocol, roadmap linking requirement, status dashboard
