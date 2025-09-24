@@ -3,10 +3,10 @@
 *Last Updated: 2025-09-24*
 
 ## Task Status Dashboard
-**High Priority**: 2 tasks (🟢 2 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
+**High Priority**: 6 tasks (🟢 6 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
 **Medium Priority**: 1 task (🟢 1 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
 **Low Priority**: 1 task (🟢 1 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
-**Total Active**: 4 tasks
+**Total Active**: 8 tasks
 
 ## Task Status Key
 - 🟢 **Ready**: Can start immediately
@@ -34,6 +34,87 @@
 6. [ ] Document any gaps or improvements needed
 
 **Notes**: This validates the cross-AI workflow before committing to the system structure
+
+---
+
+### Task 5: Update Repository Description and License
+**Status**: 🟢 **Priority**: High  
+**Source**: Execution guide - 2025-09-24 - Repository setup  
+**Estimated Time**: 15 minutes  
+**Related Roadmap Objective**: 1. Foundation Infrastructure - Git-based documentation system
+
+**Context**: Complete the repository setup with proper description and full GPLv3 license text.
+
+**Steps to Complete**:
+1. [ ] Update GitHub repo description using REPO_DESCRIPTION.txt content
+2. [ ] Replace placeholder LICENSE with full GPLv3 text from https://www.gnu.org/licenses/gpl-3.0.txt
+3. [ ] Add README.md to repo root
+4. [ ] Commit with appropriate message
+5. [ ] Push to main branch
+
+**Notes**: Completes professional repository baseline
+
+---
+
+### Task 6: Implement Agent Routing & Observability Kit
+**Status**: 🟢 **Priority**: High  
+**Source**: Execution guide - 2025-09-24 - Agent routing system  
+**Estimated Time**: 2 hours  
+**Related Roadmap Objective**: 2. AI Orchestration System - Task routing based on AI strengths
+
+**Context**: Install the agent routing system with schemas, policies, and routing logic for AI task distribution.
+
+**Steps to Complete**:
+1. [ ] Create contracts/schemas/*.json validation schemas
+2. [ ] Create config/routing.policy.json for action mapping
+3. [ ] Implement scripts/router.py Python router stub
+4. [ ] Add docs/ directory with routing documentation
+5. [ ] Create examples/ with sample inventory and job JSON
+6. [ ] Test router locally with example job
+7. [ ] Commit and push routing kit
+
+**Notes**: Foundation for automated AI task distribution
+
+---
+
+### Task 7: Implement Merged Spec Bundle
+**Status**: 🟢 **Priority**: High  
+**Source**: Execution guide - 2025-09-24 - Unified design freeze  
+**Estimated Time**: 1.5 hours  
+**Related Roadmap Objective**: 2. AI Orchestration System - Automated context sharing
+
+**Context**: Deploy the unified specification with all schemas, design documentation, and Claude convergence preparation.
+
+**Steps to Complete**:
+1. [ ] Create contracts/jobs/repo_update.v1.2.schema.json
+2. [ ] Create contracts/state/ schemas (inventory, heartbeat, execution_report)
+3. [ ] Create docs/DESIGN_MERGED.md unified design document
+4. [ ] Create example routed jobs and execution reports
+5. [ ] Create CLAUDE_CONVERGENCE_PROMPT.txt for AI handoff
+6. [ ] Commit merged spec bundle
+7. [ ] Test schema validation
+
+**Notes**: Prepares system for Claude convergence loop
+
+---
+
+### Task 8: Set Up Dropbox Integration Environment
+**Status**: 🟢 **Priority**: High  
+**Source**: Execution guide - 2025-09-24 - Live deployment  
+**Estimated Time**: 1 hour  
+**Related Roadmap Objective**: 1. Foundation Infrastructure - Cross-platform file system automation
+
+**Context**: Deploy the live execution environment with Dropbox-based job queuing and machine inventory.
+
+**Steps to Complete**:
+1. [ ] Place machine_inventory.office3.json in Dropbox/Automation/.state/
+2. [ ] Configure job queue in Dropbox/Automation/.queue/
+3. [ ] Set up queue watcher on desktop machine
+4. [ ] Test job claiming with constraints matching
+5. [ ] Test supervised execution with Claude prompt generation
+6. [ ] Document deployment process
+
+**Notes**: Creates live automation environment across machines
 
 ---
 
