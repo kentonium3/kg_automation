@@ -14,8 +14,8 @@ $StateRoot = if ($env:STATE_ROOT) { $env:STATE_ROOT } else { "$AutomationRoot\.s
 # Project-scoped target
 $ProjectRoot = "$AutomationRoot\kg-automation"
 
-Write-Host "🚀 Deploying kg-automation to Dropbox..." -ForegroundColor Green
-Write-Host "📁 Target: $ProjectRoot" -ForegroundColor Cyan
+Write-Host "?? Deploying kg-automation to Dropbox..." -ForegroundColor Green
+Write-Host "?? Target: $ProjectRoot" -ForegroundColor Cyan
 
 # Ensure project directory exists
 if (-not (Test-Path $ProjectRoot)) {
@@ -23,7 +23,7 @@ if (-not (Test-Path $ProjectRoot)) {
 }
 
 # Copy bootstrap file to BOTH locations (AI session compatibility)
-Write-Host "🎯 Syncing Bootstrap to Both Locations..." -ForegroundColor Yellow
+Write-Host "?? Syncing Bootstrap to Both Locations..." -ForegroundColor Yellow
 if (-not (Test-Path "$AutomationRoot\ai-agents")) {
     New-Item -ItemType Directory -Path "$AutomationRoot\ai-agents" -Force | Out-Null
 }
@@ -38,7 +38,7 @@ if (-not (Test-Path "$ProjectRoot\ai-agents")) {
 Copy-Item -Path "$RepoDir\ai-agents\*" -Destination "$ProjectRoot\ai-agents\" -Recurse -Force
 
 # Copy documentation
-Write-Host "📚 Syncing Documentation..." -ForegroundColor Yellow
+Write-Host "?? Syncing Documentation..." -ForegroundColor Yellow
 if (Test-Path "$ProjectRoot\Documentation") {
     Remove-Item -Path "$ProjectRoot\Documentation\*" -Recurse -Force
 }
@@ -49,7 +49,7 @@ Copy-Item -Path "$RepoDir\Documentation\*" -Destination "$ProjectRoot\Documentat
 
 # Copy scripts (when they exist)
 if (Test-Path "$RepoDir\scripts") {
-    Write-Host "📜 Syncing Scripts..." -ForegroundColor Yellow
+    Write-Host "?? Syncing Scripts..." -ForegroundColor Yellow
     if (Test-Path "$ProjectRoot\scripts") {
         Remove-Item -Path "$ProjectRoot\scripts\*" -Recurse -Force
     }
@@ -60,7 +60,7 @@ if (Test-Path "$RepoDir\scripts") {
 }
 
 # Copy runbooks
-Write-Host "📖 Syncing Runbooks..." -ForegroundColor Yellow
+Write-Host "?? Syncing Runbooks..." -ForegroundColor Yellow
 if (Test-Path "$ProjectRoot\runbooks") {
     Remove-Item -Path "$ProjectRoot\runbooks\*" -Recurse -Force
 }
@@ -70,7 +70,7 @@ if (-not (Test-Path "$ProjectRoot\runbooks")) {
 Copy-Item -Path "$RepoDir\runbooks\*" -Destination "$ProjectRoot\runbooks\" -Recurse -Force
 
 # Copy workflows
-Write-Host "⚡ Syncing Workflows..." -ForegroundColor Yellow
+Write-Host "? Syncing Workflows..." -ForegroundColor Yellow
 if (Test-Path "$ProjectRoot\workflows") {
     Remove-Item -Path "$ProjectRoot\workflows\*" -Recurse -Force
 }
@@ -80,7 +80,7 @@ if (-not (Test-Path "$ProjectRoot\workflows")) {
 Copy-Item -Path "$RepoDir\workflows\*" -Destination "$ProjectRoot\workflows\" -Recurse -Force
 
 # Copy systems
-Write-Host "🔧 Syncing Systems..." -ForegroundColor Yellow
+Write-Host "?? Syncing Systems..." -ForegroundColor Yellow
 if (Test-Path "$ProjectRoot\systems") {
     Remove-Item -Path "$ProjectRoot\systems\*" -Recurse -Force
 }
@@ -90,13 +90,13 @@ if (-not (Test-Path "$ProjectRoot\systems")) {
 Copy-Item -Path "$RepoDir\systems\*" -Destination "$ProjectRoot\systems\" -Recurse -Force
 
 # Copy root files (README, etc.)
-Write-Host "📄 Syncing Root Files..." -ForegroundColor Yellow
+Write-Host "?? Syncing Root Files..." -ForegroundColor Yellow
 Copy-Item -Path "$RepoDir\README.md" -Destination "$ProjectRoot\README.md" -Force
 if (Test-Path "$RepoDir\.gitignore") {
     Copy-Item -Path "$RepoDir\.gitignore" -Destination "$ProjectRoot\.gitignore" -Force
 }
 
-Write-Host "✅ Deployment complete!" -ForegroundColor Green
-Write-Host "📁 Project files: $ProjectRoot" -ForegroundColor Cyan
-Write-Host "🔄 Global queue: $QueueRoot" -ForegroundColor Cyan
-Write-Host "💾 Global state: $StateRoot" -ForegroundColor Cyan
+Write-Host "? Deployment complete!" -ForegroundColor Green
+Write-Host "?? Project files: $ProjectRoot" -ForegroundColor Cyan
+Write-Host "?? Global queue: $QueueRoot" -ForegroundColor Cyan
+Write-Host "?? Global state: $StateRoot" -ForegroundColor Cyan
