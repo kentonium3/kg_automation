@@ -3,10 +3,10 @@
 *Last Updated: 2025-09-24*
 
 ## Task Status Dashboard
-**High Priority**: 6 tasks (🟢 6 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
+**High Priority**: 4 tasks (🟢 4 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
 **Medium Priority**: 1 task (🟢 1 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
 **Low Priority**: 1 task (🟢 1 Ready | 🟡 0 In Progress | 🔴 0 Blocked)  
-**Total Active**: 8 tasks
+**Total Active**: 6 tasks
 
 ## Task Status Key
 - 🟢 **Ready**: Can start immediately
@@ -17,42 +17,22 @@
 
 ## High Priority Tasks
 
-### Task 1: Test Project Management System with ChatGPT
+### Task 9: Configure MacBook Task Workers and Test
 **Status**: 🟢 **Priority**: High  
-**Source**: Claude conversation - 2025-09-24 - Project management setup  
-**Estimated Time**: 30 minutes  
-**Related Roadmap Objective**: 1. Foundation Infrastructure - Multi-AI collaboration framework
+**Source**: User request - 2025-09-24 - MacBook automation setup  
+**Estimated Time**: TBD (steps unknown - will revisit)  
+**Related Roadmap Objective**: 2. AI Orchestration System - Machine inventory and capability mapping
 
-**Context**: Validate that the two-tier project management system works across AI systems and that ChatGPT can effectively use the workflow documentation.
+**Context**: Set up and configure task worker processes on MacBook to enable automated job execution and testing of the complete automation system.
 
 **Steps to Complete**:
-1. [ ] Create new ChatGPT conversation
-2. [ ] Share project-roadmap.md and kg-tasks.md content
-3. [ ] Share project-mgmt.md workflow instructions 
-4. [ ] Ask ChatGPT to add a test task using the templates
-5. [ ] Evaluate if instructions are clear and complete
-6. [ ] Document any gaps or improvements needed
+1. [ ] Research MacBook task worker requirements and dependencies
+2. [ ] Document detailed configuration steps (TBD)
+3. [ ] Test task worker installation and setup
+4. [ ] Validate job queuing and execution
+5. [ ] Test end-to-end automation workflow
 
-**Notes**: This validates the cross-AI workflow before committing to the system structure
-
----
-
-### Task 5: Update Repository Description and License
-**Status**: 🟢 **Priority**: High  
-**Source**: Execution guide - 2025-09-24 - Repository setup  
-**Estimated Time**: 15 minutes  
-**Related Roadmap Objective**: 1. Foundation Infrastructure - Git-based documentation system
-
-**Context**: Complete the repository setup with proper description and full GPLv3 license text.
-
-**Steps to Complete**:
-1. [ ] Update GitHub repo description using REPO_DESCRIPTION.txt content
-2. [ ] Replace placeholder LICENSE with full GPLv3 text from https://www.gnu.org/licenses/gpl-3.0.txt
-3. [ ] Add README.md to repo root
-4. [ ] Commit with appropriate message
-5. [ ] Push to main branch
-
-**Notes**: Completes professional repository baseline
+**Notes**: Will need to revisit with detailed steps once MacBook task worker architecture is defined
 
 ---
 
@@ -173,7 +153,7 @@
 **Steps to Complete**:
 1. [ ] Locate current ai-context-bootstrap.md
 2. [ ] Add project-roadmap.md to mandatory readings
-3. [ ] Add kg-tasks.md to mandatory readings  
+3. [ ] Add kg-tasks.md to mandatory readings
 4. [ ] Add project-mgmt.md to workflow instructions
 5. [ ] Test with fresh AI conversation
 
