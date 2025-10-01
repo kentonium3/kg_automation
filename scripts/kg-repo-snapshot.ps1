@@ -3,7 +3,7 @@
 # Creates snapshots and tracks repository changes for governance compliance
 
 # --- Settings ---
-$RepoPath  = "C:\Users\Kent\Documents\Code\kg-automation"
+$RepoPath  = "C:\Users\Kent\Vaults-repos\kg-automation"   # Repository path
 $DropRoot  = "C:\Users\Kent\Dropbox\Automation"           # global Automation root (Windows)
 $StateDir  = Join-Path $DropRoot ".state"                 # global
 $QueueDir  = Join-Path $DropRoot ".queue"                 # global
