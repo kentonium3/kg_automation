@@ -1,0 +1,45 @@
+mission-lifecycle gate -- hook wiring report
+repository: /Users/kentgale/repos/spec-kitty-qa
+
+SETTINGS FILES
+  [OK          ] .claude/settings.json  (in-repo; 2 hook command(s))
+  [OK          ] .claude/settings.local.json  (in-repo; 0 hook command(s))
+  [OK          ] $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json)  (operator-local, informational; 2 hook command(s))
+
+HOOK SCRIPTS AND THEIR REFERENCES
+  fault_ledger.py: UNWIRED -- nothing in the settings files read references it
+  mission_lifecycle_gate.py: UNWIRED -- nothing in the settings files read references it
+  upstream_filing_guard.py: PreToolUse [Bash] <- $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) (operator-local)
+  upstream_filing_guard.py: PreToolUse [Write|Edit|MultiEdit] <- $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) (operator-local)
+
+REQUIRED WIRING (this repository)
+  [UNWIRED ] mission_lifecycle_gate.py @ PreToolUse
+  [UNWIRED ] mission_lifecycle_gate.py @ PostToolUse
+  [UNWIRED ] mission_lifecycle_gate.py @ PostToolUseFailure
+
+REFERENCED SCRIPT PATHS
+  [PRESENT   ] /Users/kentgale/repos/spec-kitty-qa/scripts/hooks/upstream_filing_guard.py  ($CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json))
+
+WIRING FILE TRACKING
+  [TRACKED] .claude/settings.json -- tracked by `git add -f`, and STILL matched by .gitignore:28:.claude/	.claude/settings.json — untrack it and it disappears from every clone
+
+COMMAND-STRING HAZARDS
+  [FLAG] $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) PreToolUse: carries '|| exit 0', which turns a missing or crashed script into an ALLOW  (operator-local, informational)
+  [FLAG] $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) PreToolUse: carries the machine-local path prefix '/Users/'  (operator-local, informational)
+  [FLAG] $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) PreToolUse: carries '|| exit 0', which turns a missing or crashed script into an ALLOW  (operator-local, informational)
+  [FLAG] $CLAUDE_CONFIG_DIR/settings.json (/Users/kentgale/.claude-work/settings.json) PreToolUse: carries the machine-local path prefix '/Users/'  (operator-local, informational)
+
+KNOWN GAPS
+  - upstream_filing_guard.py is wired only in operator-local settings (~/.claude-work/settings.json), so it is not clone-portable. WP08 wired the mission-lifecycle gate and left this one alone on purpose; run with --include-user to see the operator-local references from this machine.
+
+WHAT THIS REPORT CANNOT TELL YOU
+  This report reads settings files. There is no documented runtime way to list the
+  hooks a live session has active, so it cannot tell you a wired hook fired -- only
+  that something references the script. Project hooks also require each person
+  cloning this repository to accept the workspace-trust dialog before they run at
+  all, so a fresh clone is wired but not yet enforcing.
+
+RESULT: 3 problem(s)
+  x required wiring is UNWIRED: mission_lifecycle_gate.py @ PreToolUse. Nothing in this repository invokes that checkpoint, so it does not run for anyone who clones it.
+  x required wiring is UNWIRED: mission_lifecycle_gate.py @ PostToolUse. Nothing in this repository invokes that checkpoint, so it does not run for anyone who clones it.
+  x required wiring is UNWIRED: mission_lifecycle_gate.py @ PostToolUseFailure. Nothing in this repository invokes that checkpoint, so it does not run for anyone who clones it.
