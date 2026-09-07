@@ -66,7 +66,7 @@ When a feature adds, moves, archives, or deletes any document or directory under
 
 - Adding a new doc or directory under `docs/`
 - Moving or renaming a doc or directory
-- Archiving a doc (moving to `docs/archive/`)
+- Archiving a doc (moving to the private `kg-auto-aux` repo's `archive/`, #968)
 - Deprecating a doc (setting `status: deprecated`)
 - Adding a new machine-readable artifact under `docs/design/architecture/data/`
 

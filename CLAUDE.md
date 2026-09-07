@@ -134,7 +134,7 @@ config are updated.
 ```
 ai-agents/          ← agent instruction files (this file's siblings)
 docs/
-  archive/          ← frozen historical artifacts (contains legacy func-spec/ archive)
+  archive/          ← pointer only; the artifacts moved to kg-auto-aux (#968)
   constitution/     ← governance — Felix constitution, agent registry
   design/           ← architecture specs, standards, research
   diagnostics/      ← active troubleshooting (spec-kitty workflow journal)
@@ -260,9 +260,10 @@ Canonical description in the global `~/.claude/CLAUDE.md` "Codex review checkpoi
 - `P1-infra` / `P2-infra` → check risk tier in issue body first; Tier 0 = generate only
 - `P1-rfc` → discussion and decision recording; no implementation until converted to feature/infra issue
 
-**Legacy specs:** `docs/archive/func-spec/` contains historical specs F001–F020.
-These are the archive record. Do not create new files there — new features
-live in the GitHub issue queue.
+**Legacy specs:** historical specs F001–F020 lived in `docs/archive/func-spec/`
+until 2026-09-07; they now live in the private [`kg-auto-aux`](https://github.com/kentonium3/kg-auto-aux)
+repo under `archive/func-spec/` (#968). They are the archive record. Do not
+recreate them here — new features live in the GitHub issue queue.
 
 **Design-time discipline (per Constitution Directive 6):** during
 spec-kitty specify and plan phases, identify deterministic vs stochastic
@@ -431,12 +432,19 @@ self-certified (nothing machine-checks it), so it still gets a lightweight note
 record **before it runs**, for the audit trail. Full criteria:
 [`discipline.md` § Exception: throwaway / isolated sandboxes](docs/runbooks/deploy/discipline.md#exception-throwaway--isolated-sandboxes).
 
-The 7 pre-discipline deploy scripts named in #548 were archived to
-`docs/archive/scripts/deploy/` on 2026-06-13 (their missions had all merged
-and the scripts were one-shot wrappers). The only active `scripts/deploy/`
-entry now is `deploy-felix-deployer-bootstrap.sh` (the post-discipline
-canonical bootstrap that the manifest pipeline records as
-`deploys/applied/0002-bootstrap-felix-deployer-v2.yaml`).
+The 7 pre-discipline deploy scripts named in #548 were archived on 2026-06-13 —
+their missions had all merged and the scripts were one-shot wrappers. They went to
+`docs/archive/scripts/deploy/`, and moved with the rest of the archive to the
+private [`kg-auto-aux`](https://github.com/kentonium3/kg-auto-aux) repo on
+2026-09-07 (#968).
+
+`deploy-felix-deployer-bootstrap.sh` is the post-discipline canonical bootstrap,
+recorded by the manifest pipeline as
+`deploys/applied/0002-bootstrap-felix-deployer-v2.yaml`. ⚠ It is **not** the only
+entry in `scripts/deploy/` — there are 30, including `lib/` (the shared deploy
+primitives), `felix-deployer/` (the applier itself), and per-mission deploy and
+migration scripts. This paragraph asserted otherwise until 2026-09-07; corrected
+after the claim was measured (#965).
 
 ## Documentation Standards
 

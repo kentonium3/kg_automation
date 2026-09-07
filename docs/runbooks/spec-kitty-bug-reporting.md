@@ -268,4 +268,4 @@ The agent's filing-step prompt to the operator should be of the form: *"Approve 
 ## Cross-references
 
 - [`docs/diagnostics/spec-kitty-workflow-journal.md`](<../diagnostics/spec-kitty-workflow-journal.md>) — running observations log; not a bug-tracker. Promote a journal entry to an internal issue when it stabilizes into a reproducible bug.
-- [`docs/archive/spec-kitty-feedback/`](<../archive/spec-kitty-feedback/>) — historical record of resolved upstream issues, preserved for context.
+- [`docs/archive/spec-kitty-feedback/`](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/spec-kitty-feedback) — historical record of resolved upstream issues, preserved for context.

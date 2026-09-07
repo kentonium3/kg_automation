@@ -187,14 +187,14 @@ All three runbooks are also listed under *Agent-executable* below.
 - [Felix Capability Roadmap](<./design/felix-capability-roadmap.md>) — living capability status, feature sequence, and design principles
 - [Executive Assistant Architecture — Design Brief](<./design/executive-assistant-architecture.md>) — the CEO-EA organizing frame; intake→router→executor layering; the keystone reconciliation that the world-model **is** the #692 graph layer; settled decisions (write-back, federated, coaching deferred); the router as the net-new forward design *(draft)*
 - [OpenClaw Workspace Authoring Standard](<./design/openclaw-workspace-authoring-standard.md>) — file-ownership contract (SOUL/USER/TOOLS/IDENTITY/AGENTS) + shared-invariant rules every agent workspace is authored against; validated by `scripts/openclaw/agents/validate_workspace.py` (#587)
-- [Vision & Architecture](<./archive/vision-framework.md>) *(archived — superseded by capability roadmap)*
-- [Personal AI System Spec v1.0](<./archive/personal-ai-system-spec-v1.0.md>) *(archived — design intent consolidated into roadmap; work items in GitHub issues)*
-- [Strategic Acceleration Charter](<./archive/strategic-acceleration-charter.md>) *(archived — pre-Felix era, superseded by capability roadmap)*
-- [Adversarial Analysis](<./archive/adversarial-analysis.md>) *(archived — items extracted to #126, #119)*
+- [Vision & Architecture](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/vision-framework.md) *(archived — superseded by capability roadmap)*
+- [Personal AI System Spec v1.0](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/personal-ai-system-spec-v1.0.md) *(archived — design intent consolidated into roadmap; work items in GitHub issues)*
+- [Strategic Acceleration Charter](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/strategic-acceleration-charter.md) *(archived — pre-Felix era, superseded by capability roadmap)*
+- [Adversarial Analysis](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/adversarial-analysis.md) *(archived — items extracted to #126, #119)*
 - [office2 Backup & Security](<./design/office2-backup-and-security.md>)
-- [Vikunja Integration Notes](<./archive/Vikunja.md>) *(archived — items covered by #103)*
-- [Risk Register](<./archive/risk-register.md>) *(archived — items transcribed to GitHub issues #114, #115, #116)*
-- [Decision Log](<./archive/decision-log.md>) *(archived — decisions tracked as GitHub issues with RFC labels)*
+- [Vikunja Integration Notes](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/Vikunja.md) *(archived — items covered by #103)*
+- [Risk Register](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/risk-register.md) *(archived — items transcribed to GitHub issues #114, #115, #116)*
+- [Decision Log](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/decision-log.md) *(archived — decisions tracked as GitHub issues with RFC labels)*
 
 ### docs/design/process-flows/ — Current-state process flows
 
@@ -222,7 +222,7 @@ All three runbooks are also listed under *Agent-executable* below.
 
 ---
 
-## Feature Specifications (docs/archive/func-spec/)
+## Feature Specifications (moved to kg-auto-aux `archive/func-spec/`)
 
 Historical archive. Features F001-F020 are documented here as the
 historical record. New features are tracked as GitHub Issues — see
@@ -230,8 +230,8 @@ historical record. New features are tracked as GitHub Issues — see
 
 Templates:
 
-- [Feature Specification Template](<./archive/func-spec/_TEMPLATE_spec_kitty_input.md>)
-- [Research Mission Template](<./archive/func-spec/_TEMPLATE_spec_kitty_research_input.md>)
+- [Feature Specification Template](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/func-spec/_TEMPLATE_spec_kitty_input.md)
+- [Research Mission Template](https://github.com/kentonium3/kg-auto-aux/blob/main/archive/func-spec/_TEMPLATE_spec_kitty_research_input.md)
 - [Docs Debt Issue Template](<../.github/ISSUE_TEMPLATE/docs-debt.md>)
 - [Research Issue Template](<../.github/ISSUE_TEMPLATE/research.md>)
 
@@ -248,9 +248,11 @@ Active troubleshooting and upstream bug reporting.
 
 ---
 
-## Archive (docs/archive/)
+## Archive (moved)
 
-Frozen historical artifacts. Not maintained. Excluded from this index.
+Frozen historical artifacts. **Moved 2026-09-07** to the private
+[`kg-auto-aux`](https://github.com/kentonium3/kg-auto-aux) repo under `archive/` (#968).
+Not maintained. Excluded from this index. `docs/archive/README.md` is a pointer.
 
 ---
 
