@@ -1,3 +1,11 @@
+---
+title: 'Handoff: autonomous-run guard intake'
+doc_type: note
+audience: agents_and_humans
+status: active
+last_updated: '2026-09-06'
+---
+
 # Handoff — autonomous-run guard intake
 
 **Written 2026-09-06 by a work-hat session in `spec-kitty-qa`. Everything below is for a
