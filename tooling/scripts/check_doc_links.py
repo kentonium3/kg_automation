@@ -36,6 +36,12 @@ What is deliberately NOT checked
 * ``**/skills/**`` — vendored spec-kitty skill files reference spec-kitty's *own*
   docs (``docs/api/bulk-edit-gate.md`` and similar), which do not exist in a
   consumer repo and never will. They are installed artifacts, not our prose.
+* ``.agents/autonomous-run-guard/`` — a payload received wholesale from
+  ``spec-kitty-qa`` (#964), where its docs sat beside siblings that are not here.
+  Same shape as the skills case: the links describe that repo's tree, not ours.
+  Editing them is not an option — the intake asserts every file byte-identical to
+  ``spec-kitty-qa@main`` by sha256, and this is the only surviving copy, so
+  "fixing" a link would falsify the record it exists to be.
 * URLs, anchors, and ``mailto:``/``tel:`` — this checks the filesystem, not the
   network, so it stays fast and offline.
 
@@ -71,7 +77,7 @@ _SCRATCH_DIRS = {".git", ".worktrees", "node_modules", ".venv", "__pycache__"}
 # are committed files -- so the policy lives here and applies on BOTH enumeration
 # paths. Each entry is justified in the module docstring above.
 _EXCLUDED_PATH_PARTS = ("kitty-specs",)
-_EXCLUDED_SUBSTRINGS = ("docs/archive/", "/skills/")
+_EXCLUDED_SUBSTRINGS = ("docs/archive/", "/skills/", ".agents/autonomous-run-guard/")
 
 _NON_FILE_SCHEMES = ("http://", "https://", "mailto:", "tel:", "#")
 
