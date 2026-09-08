@@ -1,0 +1,41 @@
+schema_version: v1
+name: qa-pipeline-decommission
+mission_slug: qa-pipeline-decommission-01M219TT
+tier: 2
+entrypoint: scripts/deploy/deploy-qa-pipeline-decommission.sh
+audited_surface: true
+expected_baselines:
+- listening-ports.txt
+- docker-images.txt
+verification:
+  pre:
+  - test -f scripts/decommission/office2/teardown.sh
+  - test -f scripts/decommission/office2/operator-root-steps.sh
+  - test -f scripts/decommission/office2/verify.sh
+  post:
+  - test -f /data/services/host-state/decommission/qa-pipeline-2026-09-08/operator-complete.txt
+  - B=/data/services/host-state/decommission/qa-pipeline-2026-09-08; bash "$B/verify.sh"
+    --since "$(head -n1 "$B/teardown-complete.txt" 2>/dev/null)"
+created_at: '2026-09-08T21:30:00Z'
+created_by: qa-pipeline-decommission-01M219TT
+notes: "Decommissions the office2 QA pipeline (kentonium3/kg-automation#970):\nqa-register\
+  \ docker DB (:8788), qa-dispatch-webhook (:3457, public Funnel\n:8443), the launcher\
+  \ trio in ~claude, /data/services/qa-register/, and the\n/home/claude/spec-kitty-qa/\
+  \ code copy. Archive-first (C-003): the entrypoint\nbuilds a verified sha256 bundle\
+  \ at\n/data/services/host-state/decommission/qa-pipeline-2026-09-08/ (inside the\n\
+  Restic source set) BEFORE any removal, and copies the operator + verify\nscripts\
+  \ there.\n\nDELIBERATE GATE: verification.post FAILS every tick until Kent runs\
+  \ the\nroot-only half (ssh office2-kgale, then\nsudo bash <bundle>/operator-root-steps.sh\
+  \ \u2014 archives + removes\n/etc/qa-webhook.env, turns Funnel off for :8443 only,\
+  \ writes\noperator-complete.txt) AND verify.sh exits 0 (tri-state contract, all\n\
+  removal checks ABSENT, zero UNCHECKABLE). teardown.sh is idempotent, so the\nper-tick\
+  \ re-run while the gate is open is a no-op; the per-tick failure\nalert until the\
+  \ operator acts is a known, accepted cost (plan step 7). Only\nwhen the gate passes\
+  \ is the deploy recorded applied and the deferred\nrebaseline stamped.\n\nTier 2:\
+  \ removes application state (SQLite DB, service env) \u2014 recent Restic\nsnapshot\
+  \ enforced before apply, and the pre-teardown state enters a snapshot.\n\nexpected_baselines:\
+  \ the port closures (:8443 v4+v6, :3457, :8788) and the\nqa-register image removal\
+  \ drift listening-ports.txt and docker-images.txt\nwith NO repo-file signal (#685\
+  \ caveat), so they are declared here.\n"
+apply_mode: manifest
+applied_at: '2026-09-08T23:12:34Z'
