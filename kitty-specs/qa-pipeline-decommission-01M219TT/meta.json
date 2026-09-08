@@ -10,5 +10,7 @@
   "purpose_tldr": "Remove all QA Pipeline traces from office2 and the Mac now that EXE.dev owns the pipeline",
   "slug": "qa-pipeline-decommission-01M219TT",
   "target_branch": "feat/970-qa-decommission",
-  "topology": "single_branch"
+  "topology": "single_branch",
+  "vcs": "git",
+  "vcs_locked_at": "2026-09-08T20:19:28.499879+00:00"
 }
