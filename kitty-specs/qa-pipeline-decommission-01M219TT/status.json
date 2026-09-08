@@ -1,7 +1,7 @@
 {
-  "event_count": 22,
-  "last_event_id": "01M21E4R7N9ZNNMPZKDNX86PFT",
-  "materialized_at": "2026-09-08T21:17:49.173729+00:00",
+  "event_count": 23,
+  "last_event_id": "01M21E61GDAQB9ZYHKRWQD8EXQ",
+  "materialized_at": "2026-09-08T21:18:31.438060+00:00",
   "mission_number": "",
   "mission_slug": "qa-pipeline-decommission-01M219TT",
   "mission_type": "software-dev",
@@ -11,9 +11,9 @@
     "canceled": 0,
     "claimed": 0,
     "done": 0,
-    "for_review": 1,
+    "for_review": 0,
     "in_progress": 0,
-    "in_review": 0,
+    "in_review": 1,
     "planned": 0
   },
   "work_packages": {
@@ -56,14 +56,17 @@
       "agent_profile": "__resolved_profile_absent__",
       "agent_profile_version": "__resolved_profile_version_absent__",
       "force_count": 0,
-      "lane": "for_review",
-      "last_event_id": "01M21E4R7N9ZNNMPZKDNX86PFT",
-      "last_transition_at": "2026-09-08T21:17:49.173729+00:00",
+      "lane": "in_review",
+      "last_event_id": "01M21E61GDAQB9ZYHKRWQD8EXQ",
+      "last_transition_at": "2026-09-08T21:18:31.438060+00:00",
       "model": "__resolved_model_absent__",
+      "notes": [
+        "Architecture record + runbook ready"
+      ],
       "provider": "__resolved_provider_absent__",
-      "role": "implementer",
-      "shell_pid": 67128,
-      "shell_pid_created_at": "1788901627.524726",
+      "role": "reviewer",
+      "shell_pid": 75920,
+      "shell_pid_created_at": "1788902307.347609",
       "subtasks": {
         "T006": "done",
         "T007": "done",
