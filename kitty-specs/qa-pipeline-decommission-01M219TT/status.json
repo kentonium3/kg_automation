@@ -28,7 +28,8 @@
       "last_transition_at": "2026-09-08T20:42:37.488306+00:00",
       "model": "__resolved_model_absent__",
       "notes": [
-        "Teardown artifacts ready"
+        "Teardown artifacts ready",
+        "Review REJECT: Major P14 pgrep-die-in-subshell; stale-archive window; V-12/V-13 tests missing; V-15 evidence loss; dead constant"
       ],
       "provider": "__resolved_provider_absent__",
       "review_result": {
