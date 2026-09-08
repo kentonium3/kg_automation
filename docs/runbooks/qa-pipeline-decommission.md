@@ -29,7 +29,11 @@ snapshot enforced before apply). Its entrypoint
 `scripts/deploy/deploy-qa-pipeline-decommission.sh --apply`:
 
 1. Copies `teardown.sh`, `operator-root-steps.sh`, `verify.sh` into the archive
-   bundle (stable copies at a path that survives repo evolution).
+   bundle **once** — frozen copies at a path that survives repo evolution. On
+   retry ticks an already-bundled script is never silently overwritten: if the
+   repo copy has diverged from the bundled copy, the entrypoint fails loudly
+   and the divergence must be reconciled deliberately. The verification gate
+   and the operator run the **bundle** copies, not the moving checkout.
 2. Runs `scripts/decommission/office2/teardown.sh --apply` (idempotent), which
    does everything the `claude` user can do, archive-before-removal (C-003):
    - **stop** the qa-register container (quiesces SQLite for a cold copy);
@@ -76,7 +80,10 @@ It never prints the contents of `qa-webhook.env` (it holds credentials).
 ## The rebaseline gate (deliberate per-tick failure)
 
 The manifest's `verification.post` requires **both** `operator-complete.txt`
-and a clean `verify.sh` run. Until then, **the final action fails on every
+and a clean run of the **bundle's frozen** `verify.sh`, anchored on the
+teardown completion stamp: `--since "$(head -n1 <bundle>/teardown-complete.txt)"`
+(written once by `teardown.sh` at first completion), so V-13 only accepts a
+felix-canary tick that **postdates** the teardown. Until then, **the final action fails on every
 felix-deployer tick (~5 min) and each failing tick sends an ntfy alert.** This
 is the designed gate, not an incident — the known, accepted cost of holding
 the deploy open until the root half is done (plan step 7). `teardown.sh` is
@@ -95,8 +102,12 @@ unexpected — investigate (see
 ## Reading `verify.sh` (tri-state)
 
 ```bash
-ssh office2-claude 'bash /data/services/host-state/decommission/qa-pipeline-2026-09-08/verify.sh'
+ssh office2-claude 'B=/data/services/host-state/decommission/qa-pipeline-2026-09-08; bash "$B/verify.sh" --since "$(head -n1 "$B/teardown-complete.txt")"'
 ```
+
+Without `--since` (or with an unparseable value) V-13 reports `UNCHECKABLE` by
+design — a canary tick that predates the teardown cannot vouch for
+post-teardown collateral health.
 
 One line per check — `V-01`..`V-13`, `V-15` (contract:
 `kitty-specs/qa-pipeline-decommission-01M219TT/contracts/teardown-verification.md`):

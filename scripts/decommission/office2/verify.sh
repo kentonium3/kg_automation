@@ -13,8 +13,13 @@
 # OK, with zero UNCHECKABLE.
 #
 # Modes:
-#   (no args)    office2 checks V-01..V-13, V-15 (run as claude on office2)
-#   --external   V-14 only: curl probe of the public funnel URL (run from Mac)
+#   (default)         office2 checks V-01..V-13, V-15 (run as claude on office2)
+#   --since <ref>     V-13 reference time (epoch seconds or ISO-8601): only a
+#                     canary tick POSTdating <ref> can vouch for post-teardown
+#                     collateral health. The manifest gate passes the first
+#                     line of the bundle's teardown-complete.txt. Missing or
+#                     unparseable -> V-13 UNCHECKABLE.
+#   --external        V-14 only: curl probe of the public funnel URL (run from Mac)
 set -u
 
 # --- surfaces (env-overridable for tests; production defaults) ---------------
@@ -262,11 +267,31 @@ check_canary() {
     emit V-13 UNCHECKABLE "python3 not found for canary state parse"
     return
   fi
+  # A fresh green tick only vouches for post-teardown collateral health when
+  # it POSTdates the teardown. The reference time arrives via --since
+  # (epoch seconds or ISO-8601; the manifest gate reads it from the bundle's
+  # teardown-complete.txt). Missing or unparseable reference -> UNCHECKABLE:
+  # without an anchor, a tick predating the teardown could vouch for a world
+  # the teardown has since changed (Principle 14).
   local out
-  out="$(python3 - "$CANARY_STATE" "$CANARY_MAX_AGE" <<'PYEOF' 2>/dev/null
+  out="$(python3 - "$CANARY_STATE" "$CANARY_MAX_AGE" "$SINCE" <<'PYEOF' 2>/dev/null
 import json, sys
 from datetime import datetime, timezone
-path, max_age = sys.argv[1], int(sys.argv[2])
+path, max_age, since_raw = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+if not since_raw.strip():
+    print("UNCHECKABLE no teardown reference time (--since missing)")
+    sys.exit(0)
+try:
+    s = since_raw.strip()
+    if s.isdigit():
+        since = datetime.fromtimestamp(int(s), timezone.utc)
+    else:
+        since = datetime.fromisoformat(s.replace("Z", "+00:00"))
+        if since.tzinfo is None:
+            since = since.replace(tzinfo=timezone.utc)
+except Exception as e:
+    print(f"UNCHECKABLE teardown reference time unparseable: {e.__class__.__name__}")
+    sys.exit(0)
 try:
     with open(path) as f:
         d = json.load(f)
@@ -280,12 +305,14 @@ try:
 except Exception as e:
     print(f"UNCHECKABLE canary state unparseable: {e.__class__.__name__}")
     sys.exit(0)
-if status != "success":
+if ts <= since:
+    print(f"UNCHECKABLE canary tick predates teardown reference ({ts.isoformat()} <= {since.isoformat()}) — wait for a post-teardown tick")
+elif status != "success":
     print(f"FAIL canary status={status}")
 elif age > max_age:
     print(f"UNCHECKABLE canary tick stale ({int(age)}s > {max_age}s)")
 else:
-    print(f"OK canary green, tick age {int(age)}s")
+    print(f"OK canary green, post-teardown tick age {int(age)}s")
 PYEOF
 )"
   if [ -z "$out" ]; then
@@ -337,11 +364,21 @@ check_persistence() {
 }
 
 # --- main --------------------------------------------------------------------
-MODE="${1:-}"
+MODE=""
+SINCE=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --external)  MODE="external" ;;
+    --since)     shift; SINCE="${1:-}" ;;
+    --since=*)   SINCE="${1#--since=}" ;;
+    *) echo "usage: $0 [--external] [--since <epoch|iso8601>]" >&2; exit 2 ;;
+  esac
+  [ $# -gt 0 ] && shift
+done
+
 case "$MODE" in
-  --external) check_external ;;
-  "")         check_office2 ;;
-  *) echo "usage: $0 [--external]" >&2; exit 2 ;;
+  external) check_external ;;
+  *)        check_office2 ;;
 esac
 
 if [ "$FAILS" -eq 0 ] && [ "$UNCHECKABLES" -eq 0 ]; then

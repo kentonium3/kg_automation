@@ -84,17 +84,28 @@ fi
 # :8443 funnel handler (https://tailscale.com/kb/1223/funnel). We deliberately
 # do NOT use `tailscale funnel reset`: serve and funnel share one config and a
 # reset risks clobbering the unrelated :443 tailnet-only serve -> :3456.
-if tailscale funnel status | grep -q ":$FUNNEL_PORT"; then
+# Probe failure is NOT ":$FUNNEL_PORT absent" (Principle 14): capture output
+# AND rc explicitly, and abort BEFORE the completion marker on any Tailscale
+# probe failure — a broken probe must never let operator-complete.txt be
+# written on an unverified funnel state.
+FUNNEL_OUT="$(tailscale funnel status 2>&1)" \
+  || die "tailscale funnel status probe failed (rc=$?) — probe failure is not 'funnel off'; aborting before operator-complete.txt"
+if printf '%s\n' "$FUNNEL_OUT" | grep -q ":$FUNNEL_PORT"; then
   log "turning Funnel off for :$FUNNEL_PORT"
   tailscale funnel --https="$FUNNEL_PORT" off
 else
   log "Funnel already off for :$FUNNEL_PORT (no-op)"
 fi
 
-# post-conditions: :8443 gone, the :443 serve -> :3456 untouched
-tailscale funnel status | grep -q ":$FUNNEL_PORT" \
+# post-conditions: :8443 gone, the :443 serve -> :3456 untouched. Both
+# re-probes capture rc explicitly; any probe failure aborts before the marker.
+POST_FUNNEL_OUT="$(tailscale funnel status 2>&1)" \
+  || die "post-off 'tailscale funnel status' probe failed (rc=$?) — cannot confirm :$FUNNEL_PORT is off; aborting before operator-complete.txt"
+printf '%s\n' "$POST_FUNNEL_OUT" | grep -q ":$FUNNEL_PORT" \
   && die "funnel status still lists :$FUNNEL_PORT after off"
-if ! tailscale serve status 2>/dev/null | grep -q "3456"; then
+SERVE_OUT="$(tailscale serve status 2>&1)" \
+  || die "'tailscale serve status' probe failed (rc=$?) — cannot confirm the :443 serve -> :3456 survived; aborting before operator-complete.txt"
+if ! printf '%s\n' "$SERVE_OUT" | grep -q "3456"; then
   log "WARNING: the :443 tailnet-only serve -> :3456 no longer appears in 'tailscale serve status' — investigate before proceeding (it must NOT be affected by this teardown)"
 fi
 

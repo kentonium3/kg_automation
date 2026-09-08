@@ -227,22 +227,63 @@ class TestArchiveIntegrityClassifier:
         assert proc.returncode != 0
 
 
+def _since_past(seconds: int = 86400) -> list[str]:
+    """A --since reference *seconds* in the past (epoch form)."""
+    import time
+
+    return ["--since", str(int(time.time()) - seconds)]
+
+
 class TestCanaryClassifier:
-    """V-13: stale is could-not-check; an explicit bad tick is FAIL (finding 3)."""
+    """V-13: stale is could-not-check; an explicit bad tick is FAIL (finding 3);
+    only a tick POSTdating the --since teardown reference can vouch (Codex 3)."""
 
     def test_stale_green_tick_is_uncheckable(self, surfaces, clean_probes):
         _write_canary(surfaces, "success", age_seconds=4000)  # > 2100s bound
-        proc, verdicts = _run(surfaces, clean_probes)
+        proc, verdicts = _run(surfaces, clean_probes, _since_past())
         assert verdicts.get("V-13") == "UNCHECKABLE", proc.stdout
 
     def test_failed_tick_is_fail(self, surfaces, clean_probes):
         _write_canary(surfaces, "failure", age_seconds=10)
-        proc, verdicts = _run(surfaces, clean_probes)
+        proc, verdicts = _run(surfaces, clean_probes, _since_past())
         assert verdicts.get("V-13") == "FAIL", proc.stdout
 
     def test_fresh_green_tick_is_ok(self, surfaces, clean_probes):
         _write_canary(surfaces, "success", age_seconds=10)
-        proc, verdicts = _run(surfaces, clean_probes)
+        proc, verdicts = _run(surfaces, clean_probes, _since_past())
+        assert verdicts.get("V-13") == "OK", proc.stdout
+
+    def test_fresh_green_tick_predating_since_is_uncheckable(
+        self, surfaces, clean_probes
+    ):
+        # A fresh green tick that PREdates the teardown reference proves
+        # nothing about post-teardown collateral health.
+        import time
+
+        _write_canary(surfaces, "success", age_seconds=600)  # fresh (< 2100s)
+        future_ref = ["--since", str(int(time.time()) - 10)]  # tick older than ref
+        proc, verdicts = _run(surfaces, clean_probes, future_ref)
+        assert verdicts.get("V-13") == "UNCHECKABLE", proc.stdout
+        assert "predates" in proc.stdout
+
+    def test_missing_since_is_uncheckable(self, surfaces, clean_probes):
+        _write_canary(surfaces, "success", age_seconds=10)
+        proc, verdicts = _run(surfaces, clean_probes)  # no --since at all
+        assert verdicts.get("V-13") == "UNCHECKABLE", proc.stdout
+
+    def test_unparseable_since_is_uncheckable(self, surfaces, clean_probes):
+        _write_canary(surfaces, "success", age_seconds=10)
+        proc, verdicts = _run(surfaces, clean_probes, ["--since", "not-a-time"])
+        assert verdicts.get("V-13") == "UNCHECKABLE", proc.stdout
+
+    def test_iso_since_accepted(self, surfaces, clean_probes):
+        from datetime import datetime, timedelta, timezone
+
+        _write_canary(surfaces, "success", age_seconds=10)
+        iso_ref = (datetime.now(timezone.utc) - timedelta(hours=1)).strftime(
+            "%Y-%m-%dT%H:%M:%SZ"
+        )
+        proc, verdicts = _run(surfaces, clean_probes, ["--since", iso_ref])
         assert verdicts.get("V-13") == "OK", proc.stdout
 
 

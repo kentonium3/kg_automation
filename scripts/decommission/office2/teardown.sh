@@ -298,5 +298,17 @@ if [ -e "$CODE_DIR" ]; then
   rm -rf "$CODE_DIR"
 fi
 
+# Write-once completion stamp: the V-13 reference time. verify.sh --since
+# only accepts a canary tick that POSTdates this moment, so a pre-teardown
+# tick can never vouch for post-teardown collateral health. Write-once so
+# idempotent retry ticks do not keep pushing the reference forward.
+if [ ! -e "$BUNDLE/teardown-complete.txt" ]; then
+  {
+    date -u +%s
+    date -u +%Y-%m-%dT%H:%M:%SZ
+  } > "$BUNDLE/teardown-complete.txt"
+  log "wrote teardown-complete.txt (V-13 --since reference time)"
+fi
+
 log "teardown complete (claude half). Operator half: sudo bash $BUNDLE/operator-root-steps.sh"
 exit 0

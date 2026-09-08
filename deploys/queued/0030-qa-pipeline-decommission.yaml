@@ -14,7 +14,11 @@ verification:
     - test -f scripts/decommission/office2/verify.sh
   post:
     - test -f /data/services/host-state/decommission/qa-pipeline-2026-09-08/operator-complete.txt
-    - bash scripts/decommission/office2/verify.sh
+    # Run the bundle's FROZEN verify.sh (not the moving repo checkout copy),
+    # anchored on teardown's write-once completion stamp so V-13 only accepts
+    # a canary tick that POSTdates the teardown (missing stamp -> UNCHECKABLE
+    # -> gate keeps failing, by design).
+    - B=/data/services/host-state/decommission/qa-pipeline-2026-09-08; bash "$B/verify.sh" --since "$(head -n1 "$B/teardown-complete.txt" 2>/dev/null)"
 created_at: '2026-09-08T21:30:00Z'
 created_by: qa-pipeline-decommission-01M219TT
 notes: |

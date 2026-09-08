@@ -7,8 +7,13 @@
 # authoritative surface). This wrapper:
 #   --dry-run  delegates to teardown.sh --dry-run (prints the action list)
 #   --apply    copies the three decommission scripts into the archive bundle
-#              (so the operator has stable copies at a path that survives the
-#              repo checkout's evolution), then runs teardown.sh --apply
+#              ONCE (so the operator has frozen copies at a path that survives
+#              the repo checkout's evolution), then runs teardown.sh --apply.
+#              Copy-once: on retry ticks an already-bundled script is never
+#              silently overwritten — if the repo copy has diverged from the
+#              bundled copy, the entrypoint dies loudly so the divergence is
+#              reconciled deliberately (the bundle is the frozen artifact the
+#              operator and the verification gate run).
 #
 # The manifest's verification.post is the completion gate: it fails every
 # felix-deployer tick until Kent has run operator-root-steps.sh (root half)
@@ -40,8 +45,18 @@ fi
 
 mkdir -p "$BUNDLE"
 for f in teardown.sh operator-root-steps.sh verify.sh; do
-  cp -p "$SRC_DIR/$f" "$BUNDLE/$f"
+  if [ -e "$BUNDLE/$f" ]; then
+    # Copy-once: the bundled copy is frozen. A diverged repo copy on a retry
+    # tick must never silently replace it — die loudly instead.
+    if ! cmp -s "$SRC_DIR/$f" "$BUNDLE/$f"; then
+      echo "ERROR: bundled $f differs from repo copy $SRC_DIR/$f —" \
+           "refusing to overwrite the frozen bundle copy; reconcile deliberately" >&2
+      exit 1
+    fi
+  else
+    cp -p "$SRC_DIR/$f" "$BUNDLE/$f"
+    echo "bundled $f (frozen copy)"
+  fi
 done
-echo "copied decommission scripts into $BUNDLE"
 
 exec bash "$SRC_DIR/teardown.sh" --apply
