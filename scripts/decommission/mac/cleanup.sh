@@ -64,10 +64,25 @@ fi
 
 REFUSED=()   # "path :: reason"
 DELETED=()
+WOULD_DELETE=()  # dry-run only (review finding 7)
 ABSENT=()
 
 log() { printf '%s\n' "$*"; }
 inv() { printf '%s\n' "$*" >> "$INVENTORY_FILE"; }
+
+# Tri-state existence probe (review finding 2, Principle 14): ABSENT only when
+# the parent directory is traversable and the entry is genuinely gone; a
+# probe environment failure is UNCHECKABLE, never ABSENT.
+probe_path() {
+  local p="$1" parent
+  if [ -e "$p" ] || [ -L "$p" ]; then printf 'PRESENT'; return; fi
+  parent="$(dirname "$p")"
+  if [ -d "$parent" ] && [ -r "$parent" ] && [ -x "$parent" ]; then
+    printf 'ABSENT'
+  else
+    printf 'UNCHECKABLE'
+  fi
+}
 
 # ------------------------------------- Step 1: protection snapshot (FIRST)
 if [ ! -d "$PROTECT/.git" ]; then
@@ -76,8 +91,12 @@ if [ ! -d "$PROTECT/.git" ]; then
 fi
 SNAP_HEAD_BEFORE="$(git -C "$PROTECT" rev-parse HEAD 2>/dev/null)" || {
   echo "ERROR: cannot read HEAD of $PROTECT — refusing to proceed (M-07)" >&2; exit 1; }
-SNAP_STATUS_BEFORE="$(git -C "$PROTECT" status --porcelain 2>/dev/null | shasum -a 256 | awk '{print $1}')" || {
-  echo "ERROR: cannot hash status of $PROTECT — refusing to proceed (M-07)" >&2; exit 1; }
+# Capture git's output FIRST so its exit status is checked directly — piping
+# straight into shasum would mask a git failure as the empty-input hash
+# (review finding 1; Engineering Principle 14).
+SNAP_STATUS_RAW_BEFORE="$(git -C "$PROTECT" status --porcelain 2>/dev/null)" || {
+  echo "ERROR: git status probe failed in $PROTECT — refusing to proceed (M-07)" >&2; exit 1; }
+SNAP_STATUS_BEFORE="$(printf '%s' "$SNAP_STATUS_RAW_BEFORE" | shasum -a 256 | awk '{print $1}')"
 log "PROTECT-SNAPSHOT before: HEAD=$SNAP_HEAD_BEFORE status_sha256=$SNAP_STATUS_BEFORE"
 
 # ------------------------------------------------------- inventory header
@@ -109,11 +128,12 @@ git_guard() {
       printf 'git remote probe failed in %s' "$repo"; return 1; }
     if [ "$remotes" -eq 0 ]; then
       local n
-      n="$(git -C "$repo" rev-list --branches --count 2>/dev/null | tr -d ' ')" || n="?"
+      n="$(git -C "$repo" rev-list --branches HEAD --count 2>/dev/null | tr -d ' ')" || n="?"
       printf 'no git remote in %s — all %s commit(s) are unpushed' "$repo" "$n"
       return 1
     fi
-    unpushed="$(git -C "$repo" log --branches --not --remotes --oneline 2>/dev/null)" || {
+    # --branches HEAD covers detached-HEAD commits too (review finding 3)
+    unpushed="$(git -C "$repo" log --branches HEAD --not --remotes --oneline 2>/dev/null)" || {
       printf 'unpushed-commit probe failed in %s' "$repo"; return 1; }
     if [ -n "$unpushed" ]; then
       printf 'unpushed commits in %s (%d, e.g. %s)' \
@@ -121,7 +141,15 @@ git_guard() {
         "$(printf '%s\n' "$unpushed" | head -1)"
       return 1
     fi
-  done < <(find "$target" -maxdepth 4 -name .git 2>/dev/null)
+    local stashes
+    stashes="$(git -C "$repo" stash list 2>/dev/null)" || {
+      printf 'stash probe failed in %s' "$repo"; return 1; }
+    if [ -n "$stashes" ]; then
+      printf 'stashed work in %s (%d stash(es))' \
+        "$repo" "$(printf '%s\n' "$stashes" | wc -l | tr -d ' ')"
+      return 1
+    fi
+  done < <(find "$target" -name .git 2>/dev/null)
   return 0
 }
 
@@ -148,14 +176,15 @@ for i in "${!TARGETS[@]}"; do
     inv "- decision: DELETE"
     if [ "$DRY_RUN" -eq 1 ]; then
       log "DRY-RUN: would rm -rf $t"
+      WOULD_DELETE+=("$t")
     else
       case "$t" in
         "$HOME"/*) rm -rf "$t" ;;
         *) log "INTERNAL ERROR: $t not under \$HOME — refusing"; REFUSED+=("$t :: not under HOME"); inv "- decision OVERRIDDEN: refused (not under HOME)"; inv ""; continue ;;
       esac
       log "DELETED: $t"
+      DELETED+=("$t")
     fi
-    DELETED+=("$t")
   else
     attested=0
     for a in "${ATTESTED[@]+"${ATTESTED[@]}"}"; do
@@ -170,14 +199,15 @@ for i in "${!TARGETS[@]}"; do
       inv "- decision: DELETE under explicit operator attestation (--attest-delete)"
       if [ "$DRY_RUN" -eq 1 ]; then
         log "DRY-RUN: would rm -rf $t (attested)"
+        WOULD_DELETE+=("$t")
       else
         case "$t" in
           "$HOME"/*) rm -rf "$t" ;;
           *) log "INTERNAL ERROR: $t not under \$HOME — refusing"; REFUSED+=("$t :: not under HOME"); inv "- decision OVERRIDDEN: refused (not under HOME)"; inv ""; continue ;;
         esac
         log "DELETED (attested): $t"
+        DELETED+=("$t")
       fi
-      DELETED+=("$t")
     else
       log "TARGET $id $t: REFUSED — $reason"
       inv "- git guard: FIRED — $reason"
@@ -204,11 +234,13 @@ else
     # harness, case-insensitive). Anything else — including anything
     # ambiguous — is NON-QA and preserved (when in doubt, preserve).
     lower="$(printf '%s' "$name" | tr '[:upper:]' '[:lower:]')"
+    # Bounded tokens only (review finding 5): bare *qa* would match names like
+    # "qatar-notes", and *register* would match "registration…".
     case "$lower" in
-      *qa*|*teamspace*|*teamkitty*|*team-kitty*|*register*|*webhook*|*harness*)
-        cls="QA"; crit="name contains a QA-pipeline indicator" ;;
+      qa|qa-*|*-qa|*-qa-*|*-qa.*|qa.*|*_qa|*_qa_*|qa_*|*teamspace*|*teamkitty*|*team-kitty*|*qa-register*|*register.db*|*qa-webhook*|*webhook*|*qa-harness*|*-harness|*harness-*)
+        cls="QA"; crit="name carries a bounded QA-pipeline token" ;;
       *)
-        cls="NON-QA"; crit="no QA-pipeline indicator in name; preserved by default" ;;
+        cls="NON-QA"; crit="no bounded QA-pipeline token in name; preserved by default" ;;
     esac
     log "DOCS entry: $name -> $cls ($crit)"
     inv "- \`$name\` — **$cls** — criterion: $crit"
@@ -224,13 +256,15 @@ for entry in "${QA_DOC_ENTRIES[@]+"${QA_DOC_ENTRIES[@]}"}"; do
   if reason="$(git_guard "$entry")"; then
     if [ "$DRY_RUN" -eq 1 ]; then
       log "DRY-RUN: would rm -rf $entry"
+      WOULD_DELETE+=("$entry")
     else
       rm -rf "$entry"
       log "DELETED (Documents QA entry): $entry"
+      DELETED+=("$entry")
     fi
-    DELETED+=("$entry")
   else
     log "DOCS entry $entry: REFUSED — $reason"
+    inv "- REFUSED (recorded post-inventory, per M-08): \`$entry\` — $reason"
     REFUSED+=("$entry :: $reason")
   fi
 done
@@ -243,23 +277,23 @@ overall_refused=0
 
 for i in "${!TARGETS[@]}"; do
   t="${TARGETS[$i]}"; id="${M_IDS[$i]}"
-  if [ "$DRY_RUN" -eq 1 ]; then
-    if [ -e "$t" ]; then
-      log "$id PRESENT dry-run: no removal performed ($t)"
-    else
-      log "$id ABSENT $t does not exist"
-    fi
-    continue
-  fi
-  if [ ! -e "$t" ]; then
-    log "$id ABSENT $t does not exist"
-  else
-    refnote=""
-    for r in "${REFUSED[@]+"${REFUSED[@]}"}"; do
-      case "$r" in "$t :: "*) refnote=" — removal REFUSED: ${r#"$t :: "}" ;; esac
-    done
-    log "$id PRESENT $t still exists$refnote"
-  fi
+  state="$(probe_path "$t")"
+  case "$state" in
+    UNCHECKABLE)
+      log "$id UNCHECKABLE cannot probe $t (parent not traversable)" ;;
+    ABSENT)
+      log "$id ABSENT $t does not exist" ;;
+    PRESENT)
+      if [ "$DRY_RUN" -eq 1 ]; then
+        log "$id PRESENT dry-run: no removal performed ($t)"
+      else
+        refnote=""
+        for r in "${REFUSED[@]+"${REFUSED[@]}"}"; do
+          case "$r" in "$t :: "*) refnote=" — removal REFUSED: ${r#"$t :: "}" ;; esac
+        done
+        log "$id PRESENT $t still exists$refnote"
+      fi ;;
+  esac
 done
 
 # M-06
@@ -285,7 +319,11 @@ fi
 
 # M-07: protection clone unchanged
 SNAP_HEAD_AFTER="$(git -C "$PROTECT" rev-parse HEAD 2>/dev/null)" || SNAP_HEAD_AFTER="UNCHECKABLE"
-SNAP_STATUS_AFTER="$(git -C "$PROTECT" status --porcelain 2>/dev/null | shasum -a 256 | awk '{print $1}')" || SNAP_STATUS_AFTER="UNCHECKABLE"
+if SNAP_STATUS_RAW_AFTER="$(git -C "$PROTECT" status --porcelain 2>/dev/null)"; then
+  SNAP_STATUS_AFTER="$(printf '%s' "$SNAP_STATUS_RAW_AFTER" | shasum -a 256 | awk '{print $1}')"
+else
+  SNAP_STATUS_AFTER="UNCHECKABLE"
+fi
 if [ "$SNAP_HEAD_AFTER" = "UNCHECKABLE" ] || [ "$SNAP_STATUS_AFTER" = "UNCHECKABLE" ]; then
   log "M-07 clone_intact UNCHECKABLE could not re-probe $PROTECT"
 elif [ "$SNAP_HEAD_AFTER" = "$SNAP_HEAD_BEFORE" ] && [ "$SNAP_STATUS_AFTER" = "$SNAP_STATUS_BEFORE" ]; then
@@ -296,14 +334,14 @@ fi
 
 # M-08: guard summary
 if [ "${#REFUSED[@]}" -eq 0 ]; then
-  log "M-08 OK no target contained an unpushed or dirty git repository"
+  log "M-08 OK no unattested unpushed/dirty git repository was deleted (attested overrides, if any, are recorded in the inventory)"
 else
   log "M-08 OK guard held: ${#REFUSED[@]} target(s) REFUSED and surfaced (listed below), none deleted"
   for r in "${REFUSED[@]}"; do log "  REFUSED: $r"; done
 fi
 
 log ""
-log "SUMMARY deleted=${#DELETED[@]} refused=${#REFUSED[@]} already_absent=${#ABSENT[@]} dry_run=$DRY_RUN"
+log "SUMMARY deleted=${#DELETED[@]} would_delete=${#WOULD_DELETE[@]} refused=${#REFUSED[@]} already_absent=${#ABSENT[@]} dry_run=$DRY_RUN"
 log "INVENTORY: $INVENTORY_FILE"
 
 [ "$overall_refused" -eq 1 ] && exit 2
