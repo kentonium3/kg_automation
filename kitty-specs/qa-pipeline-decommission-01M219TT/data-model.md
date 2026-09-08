@@ -8,18 +8,27 @@ No new runtime data. Three data shapes matter:
 
 | File | Source | Producer |
 |---|---|---|
-| `register.db`, `register.db-shm`, `register.db-wal` | `/data/services/qa-register/` | manifest (claude) |
+| `register.db`, `register.db-shm`, `register.db-wal` | `/data/services/qa-register/` (container stopped first — cold copy) | manifest (claude) |
 | `register.pre-005-*.db{,-shm,-wal}` | same | manifest (claude) |
 | `service.env` | same | manifest (claude) |
 | `start-webhook.sh` | `/home/claude/` | manifest (claude) |
 | `qa-webhook.log` | `/home/claude/` | manifest (claude) |
+| `spec-kitty-qa-copy.tar.gz` — the office2 code copy | `/home/claude/spec-kitty-qa/` | manifest (claude) |
+| `qa-register-image.tar` — `docker save` of the image | docker | manifest (claude) |
+| `qa-register-inspect.json` — container run metadata | `docker inspect` | manifest (claude) |
+| `CLAUDE-MANIFEST.txt` — sha256 of every claude-produced file above | generated | manifest (claude) |
 | `qa-webhook.env` (0600 root) | `/etc/` | operator script (root) |
-| `MANIFEST.txt` — sha256 of every archived file | generated | manifest (claude) |
+| `ROOT-MANIFEST.txt` — sha256 of the root-produced file | generated | operator script (root) |
+| `operator-complete.txt` — marker gating manifest completion + rebaseline | generated | operator script (root) |
 
-Invariants: bundle exists and `MANIFEST.txt` verifies **before** any removal
-step runs (C-003); bundle lives inside the Restic source set; nothing in the
-bundle is ever committed to git or printed to logs (the env files hold
-credentials).
+Invariants: the claude-produced bundle exists and `CLAUDE-MANIFEST.txt`
+verifies **before** any removal step runs (C-003; stopping a component is not
+removal and precedes its archive to quiesce SQLite); the root-produced entries
+verify against `ROOT-MANIFEST.txt` before verification passes; the bundle
+suffices to restore either component without any other source (NFR-002:
+image export + code tarball + run metadata + env files); bundle lives inside
+the Restic source set; nothing in the bundle is ever committed to git or
+printed to logs (the env files hold credentials).
 
 ## Inventory retirement shape
 

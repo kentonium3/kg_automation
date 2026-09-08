@@ -72,24 +72,43 @@ mechanically checkable. The architecture record and the manifest ride the same
 merge. Mac cleanup is a local script with inventory-first and an unpushed-git
 guard.
 
-**Ordering within the deploy step** (C-003):
+**Ordering within the deploy step** (C-003 means archive-before-*removal*;
+stopping a component is reversible and is allowed before its archive — it is
+what makes the SQLite archive consistent):
 
-1. Archive: `register.db*`, `service.env`, `start-webhook.sh`, and a
-   root-readable copy request for `/etc/qa-webhook.env` (operator script
-   archives it before deleting, since claude cannot read it) →
-   `/data/services/host-state/decommission/qa-pipeline-2026-09-08/`
-2. Stop webhook (SIGTERM the pid from `qa-webhook.pid`; verify exit), remove
-   `start-webhook.sh`, `qa-webhook.pid`, `qa-webhook.log` (log is archived
-   first — it is the only record of recent traffic)
-3. Stop + remove qa-register container, remove image `qa-register:fb679e6`,
-   remove `/data/services/qa-register/`
-4. Remove `/home/claude/spec-kitty-qa/`
-5. Operator script (Kent): archive+remove `/etc/qa-webhook.env`, turn Funnel
-   off for `:8443`
-6. Verify script: tri-state assertions over process, ports, container, image,
-   directories, funnel state
-7. Rebaseline: manifest `expected_baselines` declares `listening-ports.txt` +
-   `docker-images.txt`; felix-deployer's deferred-confirm flow stamps outcomes
+1. **Stop** qa-register container (`docker stop`, not remove) — quiesces
+   SQLite so `register.db*` is copied cold and restorable (Codex-3).
+2. **Archive (claude producer)** to
+   `/data/services/host-state/decommission/qa-pipeline-2026-09-08/`:
+   `register.db*` (all six files), `service.env`, `start-webhook.sh`,
+   `qa-webhook.log`, a tarball of `/home/claude/spec-kitty-qa/`, a
+   `docker save` export of the qa-register image + `docker inspect` run
+   metadata (Codex-2, NFR-002) → write `CLAUDE-MANIFEST.txt` (sha256 of every
+   claude-produced file; Codex-1 producer split).
+3. **Stop webhook** (SIGTERM pid from `qa-webhook.pid`, verify process exit),
+   then remove `start-webhook.sh`, `qa-webhook.pid`, `qa-webhook.log`.
+4. **Remove**: qa-register container, every local image whose repository is
+   `qa-register` (any tag/ID; Codex-9), `/data/services/qa-register/`,
+   `/home/claude/spec-kitty-qa/`.
+5. **Operator script (Kent, root)**: archive `/etc/qa-webhook.env` into the
+   bundle with its own `ROOT-MANIFEST.txt` (claude cannot read it; Codex-1),
+   remove it, turn Funnel off for `:8443`, write the operator-complete marker
+   `operator-complete.txt` into the bundle.
+6. **Verify** (tri-state contract): process, ports, funnel (local + external
+   probe from the Mac, Codex-5), container, images-by-repo, directories,
+   launcher trio, root env file, archive integrity (both manifests), a fresh
+   persistence re-scan (crontab/systemd/launchers, Codex-7), and collateral
+   health — felix-canary green + inventory health checks passing (Codex-4).
+7. **Rebaseline gate (Codex-8)**: the manifest's final action fails (and
+   retries each deployer tick) until `operator-complete.txt` exists AND the
+   verify script exits 0 — only then does the run complete and the
+   deferred-confirm rebaseline stamp `listening-ports.txt` +
+   `docker-images.txt`. Known cost: felix-deployer alerts on each failing
+   retry tick until Kent runs the operator script; acceptable for a
+   same-session window and explicitly part of the gate.
+8. **Retention check (Codex-11)**: after the next scheduled backup, the
+   restic pointer's snapshot timestamp must postdate the bundle's creation
+   (claude-readable pointer check, B-03).
 
 ## Implementation Concern Map
 
