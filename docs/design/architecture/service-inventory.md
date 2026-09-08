@@ -22,6 +22,14 @@ All services run on office2 unless otherwise noted.
 | Ollama | Host binary | `ollama` (latest, 0.23.2) | 11434 | 127.0.0.1 (localhost) | `ollama.service` (system, user `ollama`) | `/usr/share/ollama/.ollama` |
 | Google Workspace (`gog` CLI) | CLI integration | `gog` (Linuxbrew, `steipete/tap/gogcli`) | — | — | n/a (on-demand CLI) | `/home/claude/.config/gogcli/credentials.json` |
 
+> **Retired 2026-09-08 (#970):** the two spec-kitty-qa QA Pipeline interim tenants —
+> `qa-register` (Docker, :8788) and `qa-dispatch-webhook` (native, :3457 behind the public
+> Tailscale Funnel :8443) — were decommissioned by mission
+> `qa-pipeline-decommission-01M219TT`. They were registered only in
+> `data/service-inventory.json` (#886, never in this table); their retired entries, the
+> archive-bundle path, and the restore material live there. See the
+> [`qa-pipeline-decommission` runbook](<../../runbooks/qa-pipeline-decommission.md>).
+
 ## Scheduled Jobs
 
 | Job | Schedule | Script/Agent | User | Purpose |

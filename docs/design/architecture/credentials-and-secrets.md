@@ -2,9 +2,9 @@
 title: Credentials and Secrets
 doc_type: reference
 status: approved
-last_updated: '2026-07-23'
-last_validated: '2026-07-23'
-updated_by: 'vikunja-token-seam-kent-cutover-01KY8XQ0 (#860 phase 2, ADR-0007 — vikunja-api/felix-bot retired to dormant/non-runtime; vikunja-api-kent is the sole runtime Vikunja credential) + #715-vikunja-api-kent-config-token + #699-felix-calendar-helper-personal-google-oauth (RFC #681 calendar phase) + #520-felix-vikunja-sync-project-layer-and-url-config + #523-kg-felix-bot-project-sync-pat-added + #345-audit-confirms-sync (silent-removal policy per change-control.md) + #304-felix-bot-rotation + #267-openclaw-gateway-env-narrative + #100-google-workspace-foundation + #227 + #115 + #115-narrative-sync + rename-kentonium3-pat-to-gh-oauth'
+last_updated: '2026-09-08'
+last_validated: '2026-09-08'
+updated_by: 'qa-pipeline-decommission-01M219TT (#970 — qa-webhook-env registered-at-retirement in the Deprecated Credentials table: /etc/qa-webhook.env archived into the decommission bundle by the operator script, then removed) + vikunja-token-seam-kent-cutover-01KY8XQ0 (#860 phase 2, ADR-0007 — vikunja-api/felix-bot retired to dormant/non-runtime; vikunja-api-kent is the sole runtime Vikunja credential) + #715-vikunja-api-kent-config-token + #699-felix-calendar-helper-personal-google-oauth (RFC #681 calendar phase) + #520-felix-vikunja-sync-project-layer-and-url-config + #523-kg-felix-bot-project-sync-pat-added + #345-audit-confirms-sync (silent-removal policy per change-control.md) + #304-felix-bot-rotation + #267-openclaw-gateway-env-narrative + #100-google-workspace-foundation + #227 + #115 + #115-narrative-sync + rename-kentonium3-pat-to-gh-oauth'
 tags: [304, 343, 490, 115, 520, 860]
 ---
 
@@ -357,6 +357,7 @@ graph TD
 | Name | Deprecated At | Replaced By | Disposition |
 |------|---------------|-------------|-------------|
 | `personal-google` | 2026-05-13 (#100) | `google-workspace-client` + `gog-credentials-keyring` | Files (`google-calendar-client-id`, `google-calendar-client-secret`, `google-calendar-refresh-token` under `/data/services/openclaw/secrets/`) remain on disk pending operator confirmation that no consumer references them. Deletion deferred to operator discretion post-merge. The legacy script `scripts/google/authorize-calendar.py` has been archived to `docs/archive/scripts/authorize-calendar.py` (history preserved via `git mv`). |
+| `qa-webhook-env` | 2026-09-08 (#970, mission `qa-pipeline-decommission-01M219TT`) | nothing — its consumer (the spec-kitty-qa `qa-dispatch-webhook`) is decommissioned | Root-owned `/etc/qa-webhook.env` (Linear webhook secrets) **archived then removed** by Kent's operator script (effective when manifest 0030 + the operator script apply) (`operator-root-steps.sh` — agents cannot read root files). Archived copy: `/data/services/host-state/decommission/qa-pipeline-2026-09-08/qa-webhook.env` (0600 root, sha256 in `ROOT-MANIFEST.txt`, inside the Restic source set). **Registered at retirement**: never in the manifest while live (out-of-band work-hat deploy, #886) — the retired entry in `credential-manifest.json` closes that gap. Treat the archived value as exposed-at-rest if the Linear secret is ever reused. |
 
 The deprecation reflects the consolidation of all Google Workspace API
 access onto the `gog` CLI per ADR-0001. The `personal-google` credential

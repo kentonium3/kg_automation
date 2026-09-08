@@ -188,6 +188,7 @@ local validation and CI.
 - [OpenClaw Ecosystem Upgrade](<./runbooks/openclaw-ecosystem-upgrade.md>)
 - [Post-Change Verification Protocol](<./runbooks/governance/post-change-verification.md>)
 - [Pre-Flight Change Checklist](<./runbooks/governance/pre-flight-checklist.md>)
+- [QA Pipeline Decommission](<./runbooks/qa-pipeline-decommission.md>)
 - [Repository Governance](<./runbooks/repo-governance.md>)
 - [Restic Backup Operations](<./runbooks/restic-backup-ops.md>)
 - [Security Baseline Operations](<./runbooks/security-baseline-ops.md>)

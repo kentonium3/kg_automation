@@ -1,0 +1,30 @@
+{
+  "entries": [
+    {
+      "created_at": "2026-09-08T20:03:24.391353Z",
+      "decision_id": "01M219WG37WXRZPHXGNY3ZHHAR",
+      "final_answer": "As the mission deploy step \u2014 ordered, manifest-driven teardown with archive-first and pre/post verification",
+      "input_key": "webhook_teardown_timing",
+      "mission_id": "01M219TT1KVFKQZCBRFG72PYGR",
+      "mission_slug": "qa-pipeline-decommission-01M219TT",
+      "opened_by": "cli",
+      "options": [
+        "Immediately, before the arc continues",
+        "As the mission deploy step",
+        "Other"
+      ],
+      "origin_flow": "specify",
+      "other_answer": false,
+      "question": "Stop the qa-dispatch-webhook and close the Funnel immediately (pre-mission manual action), or as the mission's ordered deploy step?",
+      "rationale": null,
+      "resolved_at": "2026-09-08T20:07:55.958752Z",
+      "resolved_by": null,
+      "slot_key": "specify.teardown.webhook-timing",
+      "status": "resolved",
+      "step_id": null,
+      "summary_json": null
+    }
+  ],
+  "mission_id": "01M219TT1KVFKQZCBRFG72PYGR",
+  "version": 1
+}

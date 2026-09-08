@@ -2,8 +2,8 @@
 title: Data Flows
 doc_type: reference
 status: approved
-last_updated: '2026-08-28'
-updated_by: 'crontab-backup-coverage-01M12V87 (#895 — +crontab-capture flow: hourly claude-crontab capture into /data/services/, already a Restic source path, so the crontab becomes recoverable from a snapshot without depending on a security-monitor drift baseline) + vikunja-token-seam-kent-cutover-01KY8XQ0 (#860 phase 2, ADR-0007 — intake scan flow flips from a felix-bot read token to the kent token, collapsing the #715 two-token model onto the single runtime vikunja-api-kent credential) + openclaw-skills-sync-01KXW1DQ (#775 — +openclaw-skill-sync flow: pull-based SKILL.md deploy/sync repo -> office2 via agent-skill-sync, sibling to agent-prompt-sync #567; closes the #563 skills silent-drift class) + task-intake-validation-loop-01KXS06W (#749 — +intake-validation-loop flow: scan -> WhatsApp digest -> compact-shorthand reply -> kent-token apply; closes #750) + felix-canary-registry-01KX8T7B (#327 — +felix-canary, +felix-trust-scan, +unified-alert-bus-emit observability flows) + felix-calendar-helper-01KX4H3C (#699 — calendar surface now Felix helper -> Google direct, not gog; closes #679) + felix-admin-cron-path-fix-01KWQTY3 (#656) + restore-whatsapp-dm-reply-delivery-01KTVVHH (#588) + inbox-calendar-and-aspiration-routing-01KTHHXS + #520-felix-vikunja-sync-project-layer-and-url-config'
+last_updated: '2026-09-08'
+updated_by: 'qa-pipeline-decommission-01M219TT (#970 — qa-linear-dispatch-ingress registered-at-retirement: the Linear→office2 QA dispatch flow, the host''s only public-internet data flow, retired; never recorded here while live, an out-of-band gap from #886) + crontab-backup-coverage-01M12V87 (#895 — +crontab-capture flow: hourly claude-crontab capture into /data/services/, already a Restic source path, so the crontab becomes recoverable from a snapshot without depending on a security-monitor drift baseline) + vikunja-token-seam-kent-cutover-01KY8XQ0 (#860 phase 2, ADR-0007 — intake scan flow flips from a felix-bot read token to the kent token, collapsing the #715 two-token model onto the single runtime vikunja-api-kent credential) + openclaw-skills-sync-01KXW1DQ (#775 — +openclaw-skill-sync flow: pull-based SKILL.md deploy/sync repo -> office2 via agent-skill-sync, sibling to agent-prompt-sync #567; closes the #563 skills silent-drift class) + task-intake-validation-loop-01KXS06W (#749 — +intake-validation-loop flow: scan -> WhatsApp digest -> compact-shorthand reply -> kent-token apply; closes #750) + felix-canary-registry-01KX8T7B (#327 — +felix-canary, +felix-trust-scan, +unified-alert-bus-emit observability flows) + felix-calendar-helper-01KX4H3C (#699 — calendar surface now Felix helper -> Google direct, not gog; closes #679) + felix-admin-cron-path-fix-01KWQTY3 (#656) + restore-whatsapp-dm-reply-delivery-01KTVVHH (#588) + inbox-calendar-and-aspiration-routing-01KTHHXS + #520-felix-vikunja-sync-project-layer-and-url-config'
 tags: [860, 775, 567, 563, 327, 683, 701, 706, 516, 656, 588, 520, 507, 519, 518, 309, 343, 362, 391, 400, 310, 374]
 ---
 
@@ -884,6 +884,26 @@ bus. Closes the SKILL.md silent-drift gap (#563 class); deploy/sync **mechanism*
 only — skill **content** refresh is #714. Ops:
 [`agent-skill-sync-ops.md`](<../../runbooks/agent-skill-sync-ops.md>).
 Authoritative record: `flows[?name=openclaw-skill-sync]` in
+`data/data-flows.json`.
+
+### QA Linear Dispatch Ingress (retired 2026-09-08, #970)
+
+**Retired — registered at retirement.** Was the host's only public-internet data
+flow (live 2026-08-04..2026-09-08):
+
+```
+Linear (cloud) → Tailscale Funnel :8443 (public) → qa-dispatch-webhook 127.0.0.1:3457 (HMAC-verified) → qa-register SQLite :8788   [no longer runs]
+```
+
+Deployed out-of-band by the work hat (#886), so it never appeared in this file
+while live; this entry closes that gap in the record. Retired by mission
+`qa-pipeline-decommission-01M219TT` (#970) via deploy manifest 0030 plus Kent's
+root-only operator script (Funnel off). Pre-teardown state — `register.db` (cold
+copy), env files, image export, code tarball — is archived with sha256 manifests
+at `/data/services/host-state/decommission/qa-pipeline-2026-09-08/` (inside the
+Restic source set). See the
+[`qa-pipeline-decommission` runbook](<../../runbooks/qa-pipeline-decommission.md>).
+Authoritative record: `flows[?name=qa-linear-dispatch-ingress]` in
 `data/data-flows.json`.
 
 ## Planned Flows (Not Yet Implemented)

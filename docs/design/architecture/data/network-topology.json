@@ -1,7 +1,7 @@
 {
   "schema_version": "1.2",
-  "last_updated": "2026-08-29",
-  "updated_by": "#886 (registered the spec-kitty-qa QA Pipeline ports on office2 \u2014 qa-register :8788, qa-dispatch-webhook :3457, and the Tailscale Funnel on :8443 which is the host's only public-internet ingress; corrected the access rule that still claimed no services were publicly exposed) + #575-tailscale-ssh-docs + #909 (registered office4 \u2014 Kent's attended primary development machine \u2014 as the fourth tailnet device; office4 is an unmanaged peer and runs no registered service; Tailscale SSH is off there (RunSSH: false), so tailscale_ssh is unchanged. It does run standard sshd on :22 reachable over the tailnet, authenticated by authorized_keys \u2014 that is not a registered service, so port_assignments and access_rules are also unchanged; see ADR-0008) + #932/#931 (narrowed acl_users to three named accounts, removing root \u2014 Tailscale SSH honoured it in bypass of PermitRootLogin no; enabled Tailscale SSH on office4 so both hosts use one mechanism; corrected the notes field, which described a passthrough to sshd that does not occur)",
+  "last_updated": "2026-09-08",
+  "updated_by": "qa-pipeline-decommission-01M219TT (kentonium3/kg-automation#970 — dropped the three QA Pipeline port assignments: qa-register :8788, qa-dispatch-webhook :3457, and the Tailscale Funnel :8443 that was the host's only public-internet ingress. Effective when deploy manifest 0030 + its operator script apply, office2 is back to ZERO public ingress; the access rule below records the 2026-08-04..2026-09-08 exposure window and the permanent DNS/CT-log residue) + #886 (registered the spec-kitty-qa QA Pipeline ports on office2 \u2014 qa-register :8788, qa-dispatch-webhook :3457, and the Tailscale Funnel on :8443 which is the host's only public-internet ingress; corrected the access rule that still claimed no services were publicly exposed) + #575-tailscale-ssh-docs + #909 (registered office4 \u2014 Kent's attended primary development machine \u2014 as the fourth tailnet device; office4 is an unmanaged peer and runs no registered service; Tailscale SSH is off there (RunSSH: false), so tailscale_ssh is unchanged. It does run standard sshd on :22 reachable over the tailnet, authenticated by authorized_keys \u2014 that is not a registered service, so port_assignments and access_rules are also unchanged; see ADR-0008) + #932/#931 (narrowed acl_users to three named accounts, removing root \u2014 Tailscale SSH honoured it in bypass of PermitRootLogin no; enabled Tailscale SSH on office4 so both hosts use one mechanism; corrected the notes field, which described a passthrough to sshd that does not occur)",
   "network": {
     "type": "tailscale",
     "tailnet_owner": "kentgale@",
@@ -62,45 +62,6 @@
         "interface": "tailscale0",
         "ufw_rule": "allow in on tailscale0 to any port 443 proto tcp"
       }
-    },
-    {
-      "port": 8788,
-      "service": "qa-register",
-      "host": "office2",
-      "bind_ip": "100.92.197.90",
-      "protocol": "tcp",
-      "public_exposure": "none",
-      "access": "tailscale-only",
-      "notes": "spec-kitty-qa QA Pipeline DB component; interim tenancy, moves to a dev-class machine (#887)"
-    },
-    {
-      "port": 3457,
-      "service": "qa-dispatch-webhook",
-      "host": "office2",
-      "bind_ip": "127.0.0.1",
-      "protocol": "tcp",
-      "public_exposure": "none",
-      "access": "localhost-only",
-      "notes": "Loopback origin behind the Funnel on :8443; not directly reachable"
-    },
-    {
-      "port": 8443,
-      "service": "tailscale-funnel",
-      "host": "office2",
-      "bind_ip": "tailscale0",
-      "protocol": "tcp",
-      "public_exposure": "public-internet",
-      "access": "public",
-      "tls_termination": "tailscale-funnel",
-      "public_url": "https://office2.tail0f5f56.ts.net:8443",
-      "tailscale_serve": {
-        "listen_port": 8443,
-        "funnel": true,
-        "backend": "http://127.0.0.1:3457",
-        "backend_service": "qa-dispatch-webhook",
-        "interface": "tailscale0"
-      },
-      "notes": "THE ONLY PUBLIC-INTERNET INGRESS ON OFFICE2. Live since 2026-08-04 for the spec-kitty-qa Linear dispatch webhook. Interim — retired when the pipeline moves to a dev-class machine (#887). Registered by #886."
     }
   ],
   "access_rules": [
@@ -108,7 +69,7 @@
     "SSH access for agents: ssh office2-claude only",
     "SSH access for Kent: ssh office2-kgale (Mac terminal) or Termius mobile (kgale + claude hosts)",
     "SSH connections to port 22 on the Tailscale IP are intercepted by Tailscale SSH first (action: accept), then passed to sshd for authorized_keys auth — see tailscale_ssh block above + ADR-0004",
-    "Exactly one service is exposed to the public internet: the qa-dispatch-webhook via Tailscale Funnel on :8443 (since 2026-08-04, interim \u2014 see #886/#887). Every other office2 service is tailnet-only. This rule read \"No services exposed to public internet\" until 2026-08-22, when it was corrected; treat any future public exposure as requiring an explicit entry here.",
+    "ZERO services are exposed to the public internet (effective when deploy manifest 0030 + its operator script apply): the qa-dispatch-webhook's Tailscale Funnel on :8443 \u2014 the host's only public ingress, live 2026-08-04..2026-09-08 (#886) \u2014 was retired by mission qa-pipeline-decommission-01M219TT (#970). Every office2 service is tailnet-only. Residue: office2.tail0f5f56.ts.net remains in public DNS and Certificate Transparency logs permanently. Treat any future public exposure as requiring an explicit entry here.",
     "No port forwarding or NAT traversal outside Tailscale"
   ]
 }

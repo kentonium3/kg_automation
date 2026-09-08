@@ -1,0 +1,114 @@
+{
+  "event_count": 27,
+  "last_event_id": "01M21EJR330FYPBVMYNVWRXF46",
+  "materialized_at": "2026-09-08T21:25:27.779226+00:00",
+  "mission_number": "114",
+  "mission_slug": "qa-pipeline-decommission-01M219TT",
+  "mission_type": "software-dev",
+  "summary": {
+    "approved": 0,
+    "blocked": 0,
+    "canceled": 0,
+    "claimed": 0,
+    "done": 3,
+    "for_review": 0,
+    "in_progress": 0,
+    "in_review": 0,
+    "planned": 0
+  },
+  "work_packages": {
+    "WP01": {
+      "actor": "merge",
+      "agent": "claude",
+      "agent_profile": "__resolved_profile_absent__",
+      "agent_profile_version": "__resolved_profile_version_absent__",
+      "force_count": 0,
+      "lane": "done",
+      "last_event_id": "01M21EJAY0TZ1FZP0QWD1SGMA4",
+      "last_transition_at": "2026-09-08T21:25:14.304285+00:00",
+      "model": "__resolved_model_absent__",
+      "notes": [
+        "Teardown artifacts ready",
+        "Review REJECT: Major P14 pgrep-die-in-subshell; stale-archive window; V-12/V-13 tests missing; V-15 evidence loss; dead constant",
+        "Review findings 1-5 addressed",
+        "Re-review APPROVE: findings 1-5 verified fixed, 20/20 WP tests green"
+      ],
+      "provider": "__resolved_provider_absent__",
+      "review_result": {
+        "reference": "Re-review APPROVE: findings 1-5 verified fixed, 20/20 WP tests green",
+        "reviewer": "Kent Gale",
+        "verdict": "approved"
+      },
+      "role": "reviewer",
+      "shell_pid": 44805,
+      "shell_pid_created_at": "1788899789.143053",
+      "subtasks": {
+        "T001": "done",
+        "T002": "done",
+        "T003": "done",
+        "T004": "done",
+        "T005": "done"
+      }
+    },
+    "WP02": {
+      "actor": "merge",
+      "agent": "claude",
+      "agent_profile": "__resolved_profile_absent__",
+      "agent_profile_version": "__resolved_profile_version_absent__",
+      "force_count": 0,
+      "lane": "done",
+      "last_event_id": "01M21EJR330FYPBVMYNVWRXF46",
+      "last_transition_at": "2026-09-08T21:25:27.779226+00:00",
+      "model": "__resolved_model_absent__",
+      "notes": [
+        "Architecture record + runbook ready",
+        "Review APPROVE; three minor findings folded in 91a87da7"
+      ],
+      "provider": "__resolved_provider_absent__",
+      "review_result": {
+        "reference": "Review APPROVE; three minor findings folded in 91a87da7",
+        "reviewer": "Kent Gale",
+        "verdict": "approved"
+      },
+      "role": "reviewer",
+      "shell_pid": 75920,
+      "shell_pid_created_at": "1788902307.347609",
+      "subtasks": {
+        "T006": "done",
+        "T007": "done",
+        "T008": "done",
+        "T009": "done"
+      }
+    },
+    "WP03": {
+      "actor": "merge",
+      "agent": "claude",
+      "agent_profile": "__resolved_profile_absent__",
+      "agent_profile_version": "__resolved_profile_version_absent__",
+      "force_count": 0,
+      "lane": "done",
+      "last_event_id": "01M21EJHQTJFGTQZEBMHZQEWFV",
+      "last_transition_at": "2026-09-08T21:25:21.274901+00:00",
+      "model": "__resolved_model_absent__",
+      "notes": [
+        "Mac cleanup executed, evidence recorded",
+        "Review rejected: 7 findings (2 MAJOR Principle-14: masked git-failure in M-07 hash, no UNCHECKABLE arm in M-01..05; guard holes: detached-HEAD/stash, find depth; classification + inventory + dry-run count nits)",
+        "All 7 review findings addressed in follow-up commit",
+        "Re-review APPROVE: all 7 findings fixed"
+      ],
+      "provider": "__resolved_provider_absent__",
+      "review_result": {
+        "reference": "Re-review APPROVE: all 7 findings fixed",
+        "reviewer": "Kent Gale",
+        "verdict": "approved"
+      },
+      "role": "reviewer",
+      "shell_pid": 35105,
+      "shell_pid_created_at": "1788899150.660055",
+      "subtasks": {
+        "T010": "done",
+        "T011": "done"
+      }
+    }
+  }
+}
