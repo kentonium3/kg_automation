@@ -39,3 +39,7 @@ notes: "Decommissions the office2 QA pipeline (kentonium3/kg-automation#970):\nq
   \ caveat), so they are declared here.\n"
 apply_mode: manifest
 applied_at: '2026-09-08T23:12:34Z'
+rebaseline:
+  outcome: completed
+  at_utc: '2026-09-08T23:12:44Z'
+  baseline_count: 15
