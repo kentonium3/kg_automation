@@ -30,7 +30,8 @@
       "notes": [
         "Teardown artifacts ready",
         "Review REJECT: Major P14 pgrep-die-in-subshell; stale-archive window; V-12/V-13 tests missing; V-15 evidence loss; dead constant",
-        "Review findings 1-5 addressed"
+        "Review findings 1-5 addressed",
+        "Re-review APPROVE: findings 1-5 verified fixed, 20/20 WP tests green"
       ],
       "provider": "__resolved_provider_absent__",
       "review_result": {
