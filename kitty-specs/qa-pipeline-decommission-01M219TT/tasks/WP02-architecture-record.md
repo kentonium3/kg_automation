@@ -1,35 +1,37 @@
 ---
-work_package_id: "WP02"
-title: "Architecture record and runbook"
+work_package_id: WP02
+title: Architecture record and runbook
 dependencies:
-  - "WP01"
+- WP01
 requirement_refs:
-  - FR-007
-  - FR-008
-planning_base_branch: "feat/970-qa-decommission"
-merge_target_branch: "feat/970-qa-decommission"
-branch_strategy: "Planning artifacts were generated on feat/970-qa-decommission; completed changes must merge back into feat/970-qa-decommission."
+- FR-007
+- FR-008
+planning_base_branch: feat/970-qa-decommission
+merge_target_branch: feat/970-qa-decommission
+branch_strategy: Planning artifacts for this mission were generated on feat/970-qa-decommission. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into feat/970-qa-decommission unless the human explicitly redirects the landing branch.
 subtasks:
-  - "T006"
-  - "T007"
-  - "T008"
-  - "T009"
-phase: "Phase 2 - Record"
-authoritative_surface: docs/design/architecture/
-owned_files:
-  - docs/design/architecture/**
-  - docs/runbooks/**
-  - docs/INDEX.md
-  - docs/DEVELOPER_PORTAL.md
-create_intent:
-  - docs/runbooks/qa-pipeline-decommission.md
-agent_profile: "curator-carla"
-role: "implementer"
-agent: "claude"
+- T006
+- T007
+- T008
+- T009
+phase: Phase 2 - Record
 history:
-  - timestamp: "2026-09-08T20:30:00Z"
-    agent: "system"
-    action: "Prompt generated via /spec-kitty.tasks"
+- timestamp: '2026-09-08T20:30:00Z'
+  agent: system
+  action: Prompt generated via /spec-kitty.tasks
+agent_profile: curator-carla
+authoritative_surface: docs/design/architecture/
+create_intent:
+- docs/runbooks/qa-pipeline-decommission.md
+execution_mode: code_change
+owned_files:
+- docs/design/architecture/**
+- docs/runbooks/**
+- docs/INDEX.md
+- docs/DEVELOPER_PORTAL.md
+role: implementer
+tags: []
+tracker_refs: []
 ---
 
 # Work Package Prompt: WP02 – Architecture record and runbook

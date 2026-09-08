@@ -1,42 +1,44 @@
 ---
-work_package_id: "WP01"
-title: "Office2 teardown artifacts"
+work_package_id: WP01
+title: Office2 teardown artifacts
 dependencies: []
 requirement_refs:
-  - FR-001
-  - FR-002
-  - FR-003
-  - FR-004
-  - FR-005
-  - FR-006
-  - FR-008
-  - FR-010
-planning_base_branch: "feat/970-qa-decommission"
-merge_target_branch: "feat/970-qa-decommission"
-branch_strategy: "Planning artifacts were generated on feat/970-qa-decommission; completed changes must merge back into feat/970-qa-decommission."
+- FR-001
+- FR-002
+- FR-003
+- FR-004
+- FR-005
+- FR-006
+- FR-008
+- FR-010
+planning_base_branch: feat/970-qa-decommission
+merge_target_branch: feat/970-qa-decommission
+branch_strategy: Planning artifacts for this mission were generated on feat/970-qa-decommission. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into feat/970-qa-decommission unless the human explicitly redirects the landing branch.
 subtasks:
-  - "T001"
-  - "T002"
-  - "T003"
-  - "T004"
-  - "T005"
-phase: "Phase 1 - Teardown artifacts"
-authoritative_surface: scripts/decommission/office2/
-owned_files:
-  - scripts/decommission/office2/**
-  - deploys/queued/**
-create_intent:
-  - scripts/decommission/office2/teardown.sh
-  - scripts/decommission/office2/operator-root-steps.sh
-  - scripts/decommission/office2/verify.sh
-  - deploys/queued/0xxx-qa-pipeline-decommission.yaml
-agent_profile: "implementer-ivan"
-role: "implementer"
-agent: "claude"
+- T001
+- T002
+- T003
+- T004
+- T005
+phase: Phase 1 - Teardown artifacts
 history:
-  - timestamp: "2026-09-08T20:30:00Z"
-    agent: "system"
-    action: "Prompt generated via /spec-kitty.tasks"
+- timestamp: '2026-09-08T20:30:00Z'
+  agent: system
+  action: Prompt generated via /spec-kitty.tasks
+agent_profile: implementer-ivan
+authoritative_surface: scripts/decommission/office2/
+create_intent:
+- scripts/decommission/office2/teardown.sh
+- scripts/decommission/office2/operator-root-steps.sh
+- scripts/decommission/office2/verify.sh
+- deploys/queued/0xxx-qa-pipeline-decommission.yaml
+execution_mode: code_change
+owned_files:
+- scripts/decommission/office2/**
+- deploys/queued/**
+role: implementer
+tags: []
+tracker_refs: []
 ---
 
 # Work Package Prompt: WP01 – Office2 teardown artifacts

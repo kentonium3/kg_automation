@@ -1,28 +1,30 @@
 ---
-work_package_id: "WP03"
-title: "Mac cleanup"
+work_package_id: WP03
+title: Mac cleanup
 dependencies: []
 requirement_refs:
-  - FR-009
-planning_base_branch: "feat/970-qa-decommission"
-merge_target_branch: "feat/970-qa-decommission"
-branch_strategy: "Planning artifacts were generated on feat/970-qa-decommission; completed changes must merge back into feat/970-qa-decommission."
+- FR-009
+planning_base_branch: feat/970-qa-decommission
+merge_target_branch: feat/970-qa-decommission
+branch_strategy: Planning artifacts for this mission were generated on feat/970-qa-decommission. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into feat/970-qa-decommission unless the human explicitly redirects the landing branch.
 subtasks:
-  - "T010"
-  - "T011"
-phase: "Phase 1 - Mac"
-authoritative_surface: scripts/decommission/mac/
-owned_files:
-  - scripts/decommission/mac/**
-create_intent:
-  - scripts/decommission/mac/cleanup.sh
-agent_profile: "implementer-ivan"
-role: "implementer"
-agent: "claude"
+- T010
+- T011
+phase: Phase 1 - Mac
 history:
-  - timestamp: "2026-09-08T20:30:00Z"
-    agent: "system"
-    action: "Prompt generated via /spec-kitty.tasks"
+- timestamp: '2026-09-08T20:30:00Z'
+  agent: system
+  action: Prompt generated via /spec-kitty.tasks
+agent_profile: implementer-ivan
+authoritative_surface: scripts/decommission/mac/
+create_intent:
+- scripts/decommission/mac/cleanup.sh
+execution_mode: planning_artifact
+owned_files:
+- scripts/decommission/mac/**
+role: implementer
+tags: []
+tracker_refs: []
 ---
 
 # Work Package Prompt: WP03 – Mac cleanup

@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "mission_slug": "qa-pipeline-decommission-01M219TT",
+  "mission_id": "01M219TT1KVFKQZCBRFG72PYGR",
+  "mission_branch": "kitty/mission-qa-pipeline-decommission-01M219TT",
+  "target_branch": "feat/970-qa-decommission",
+  "lanes": [
+    {
+      "lane_id": "lane-a",
+      "wp_ids": [
+        "WP01"
+      ],
+      "write_scope": [
+        "deploys/queued/**",
+        "scripts/decommission/office2/**"
+      ],
+      "predicted_surfaces": [
+        "artifact-rendering",
+        "legacy-cleanup"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-planning",
+      "wp_ids": [
+        "WP03"
+      ],
+      "write_scope": [
+        "scripts/decommission/mac/**"
+      ],
+      "predicted_surfaces": [
+        "planning"
+      ],
+      "depends_on_lanes": [],
+      "parallel_group": 0
+    },
+    {
+      "lane_id": "lane-b",
+      "wp_ids": [
+        "WP02"
+      ],
+      "write_scope": [
+        "docs/DEVELOPER_PORTAL.md",
+        "docs/INDEX.md",
+        "docs/design/architecture/**",
+        "docs/runbooks/**"
+      ],
+      "predicted_surfaces": [
+        "api",
+        "app-shell",
+        "legacy-cleanup"
+      ],
+      "depends_on_lanes": [
+        "lane-a"
+      ],
+      "parallel_group": 1
+    }
+  ],
+  "computed_at": "2026-09-08T20:18:36.535941+00:00",
+  "computed_from": "dependency_graph+ownership",
+  "planning_artifact_wps": [
+    "WP03"
+  ],
+  "planning_commit_sha": "3e1eeb7aa6c298db0ac8ea3684b7b9b5884a3a5f"
+}
