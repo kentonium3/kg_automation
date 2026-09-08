@@ -14,6 +14,9 @@ requirement_refs:
 planning_base_branch: feat/970-qa-decommission
 merge_target_branch: feat/970-qa-decommission
 branch_strategy: Planning artifacts for this mission were generated on feat/970-qa-decommission. During /spec-kitty.implement this WP may branch from a dependency-specific base, but completed changes must merge back into feat/970-qa-decommission unless the human explicitly redirects the landing branch.
+base_branch: kitty/mission-qa-pipeline-decommission-01M219TT
+base_commit: 69bc1268db278003c308e9272fad352e42b905fd
+created_at: '2026-09-08T20:19:29.977547+00:00'
 subtasks:
 - T001
 - T002
