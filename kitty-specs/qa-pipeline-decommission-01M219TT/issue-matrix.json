@@ -1,16 +1,16 @@
 {
   "rows": {
     "#886": {
-      "evidence_ref": "<link or commit>",
-      "fr": null,
-      "nfr": null,
-      "repo": null,
-      "sc": null,
-      "scope": null,
+      "evidence_ref": "kitty-specs/qa-pipeline-decommission-01M219TT/plan.md §Approach (teardown + expected_baselines gate); deploys/queued manifest (WP01)",
+      "fr": "FR-001,FR-002,FR-004,FR-007,FR-008",
+      "nfr": "NFR-004",
+      "repo": "kentonium3/kg-automation",
+      "sc": "SC-003",
+      "scope": "office2 QA-component removal ends the daily baseline-drift alert #886 tracked; inventory entries retired",
       "source_file": "spec.md",
-      "title": "<fill at WP-implementation time>",
-      "verdict": "unknown",
-      "wp": null
+      "title": "Infra: register spec-kitty-qa pipeline components (qa-register, dispatch webhook + Funnel) and stop the daily baseline-drift alert",
+      "verdict": "in-mission",
+      "wp": "WP01"
     }
   },
   "schema_version": 1
