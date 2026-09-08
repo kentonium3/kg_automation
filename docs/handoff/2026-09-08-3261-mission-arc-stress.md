@@ -14,25 +14,68 @@ last_updated: '2026-09-08'
 
 ---
 
-## 1. Read this first: you are already running the build under test
+## 1. First: apply the patch, and do it the installer-correct way
 
-There is one machine and one `uv tool` install, so **your CLI is already `3.2.6.1`** — I installed it this afternoon. You did not opt into this and nothing warned you.
+**You are running this on the Mac, so the build is NOT installed yet — you must apply it.** (On office4/Linux it already is, because that box shares one `uv tool` install with the work hat. Nothing about that helps you here.)
 
-`3.2.6.1` is an **unmerged, untagged hotfix** — `spec-kitty/spec-kitty#4051`, branch `hotfix/3.2.6.1`, cut from the `v3.2.6` tag (not `main`). Robert needs it released tomorrow morning for a two-day training in Darmstadt.
+`3.2.6.1` is an **unmerged, untagged hotfix** — `spec-kitty/spec-kitty#4051`, branch `hotfix/3.2.6.1`, cut from the `v3.2.6` tag (not `main`). Robert needs it released tomorrow morning for a two-day training in Darmstadt. It is not on PyPI, so this is a **git install**, not an upgrade.
 
-**Confirm the build from provenance, never from `--version`:**
+### 1a. Identify your installer first — do not assume
 
 ```bash
-cat ~/.local/share/uv/tools/spec-kitty-cli/uv-receipt.toml
-cat ~/.local/share/uv/tools/spec-kitty-cli/lib/python3.13/site-packages/spec_kitty_cli-*.dist-info/direct_url.json
+which -a spec-kitty && readlink -f "$(command -v spec-kitty)"
+pipx list --short 2>/dev/null | grep -i spec-kitty    # the Mac has used pipx
+uv tool list 2>/dev/null | grep -i spec-kitty         # office4/Linux uses uv
 ```
 
-Expect the receipt to name `git = "https://github.com/spec-kitty/spec-kitty?rev=cb5ab3a6a9df…"` and `direct_url.json` to carry `vcs_info.commit_id = cb5ab3a6a9df593c073ab2d04c440e879882eb0e`. If it says anything else, **stop and tell Kent** — the install moved under one of us.
+⚠ **The paths differ and only one exists per machine.** Evidence the Mac is pipx: the absolute `source_path` values I healed in `spec-kitty-qa#427` all read `/Users/kentgale/.local/pipx/venvs/spec-kitty-cli/lib/python3.13/…`. If `1a` says otherwise, believe `1a` — it is measurement and that was inference.
 
-**Rollback, if the build turns out to be bad:**
+### 1b. Record your rollback BEFORE you install
+
 ```bash
-UV_TOOL_BIN_DIR=/home/kgale/.local/bin uv tool install --force spec-kitty-cli==3.2.6
+# pipx
+cat ~/.local/pipx/venvs/spec-kitty-cli/lib/python3.*/site-packages/spec_kitty_cli-*.dist-info/direct_url.json 2>/dev/null
+pipx list --short | grep spec-kitty                 # note the version you are on
 ```
+
+Whatever version that prints is your rollback target:
+```bash
+pipx install --force spec-kitty-cli==<that-version>
+```
+
+### 1c. Install the hotfix
+
+```bash
+# pipx (expected on the Mac)
+pipx install --force "spec-kitty-cli @ git+https://github.com/spec-kitty/spec-kitty@cb5ab3a6a9df593c073ab2d04c440e879882eb0e"
+
+# uv, only if 1a says uv
+uv tool install --force "spec-kitty-cli @ git+https://github.com/spec-kitty/spec-kitty@cb5ab3a6a9df593c073ab2d04c440e879882eb0e"
+```
+
+The pin plus `--force` is **mandatory**: a plain `pipx upgrade` / `uv tool upgrade` follows the semver path, reports you current, and silently does nothing.
+
+### 1d. Verify the build MOVED — a successful-looking install is not evidence
+
+Diff the provenance record against what you recorded in `1b`:
+
+```bash
+cat ~/.local/pipx/venvs/spec-kitty-cli/lib/python3.*/site-packages/spec_kitty_cli-*.dist-info/direct_url.json
+```
+
+Expect `vcs_info.commit_id = cb5ab3a6a9df593c073ab2d04c440e879882eb0e`, and the dist-info directory to be named `spec_kitty_cli-3.2.6.1.dist-info`. `spec-kitty --version` should read `3.2.6.1` — but **that is confirmation, never the identifier.** If the provenance record does not carry that commit id, the install did not take; stop and tell Kent.
+
+Citation form for anything you report: **line, SHA, how it got here** — e.g. *"`spec-kitty-cli` from `spec-kitty/spec-kitty` @ `cb5ab3a6a`, git install via pipx; reports `3.2.6.1`."*
+
+### 1e. Then update project state for whatever repo you run the mission in
+
+```bash
+cd <repo> && git worktree list && git status --porcelain && git branch --show-current
+spec-kitty upgrade --project --dry-run < /dev/null
+spec-kitty upgrade --project --yes    < /dev/null
+```
+
+`< /dev/null` is not decoration — non-TTY stdin is what makes the mission-state repair auto-decline (see §5). On office4 this refused first with `Unresolved tool-surface drift in 2 file(s)`; `spec-kitty doctor tool-surfaces --fix` cleared it and the upgrade then completed. Expect `upgrade` to make its own commit.
 
 ## 2. What the hotfix repaired
 
@@ -54,6 +97,14 @@ On Linux, at `cb5ab3a6a`, in throwaway repos:
 - Create on a feature branch → succeeds (the refusal is not over-broad).
 - Arc advanced `not_started → discovery → specify → plan`. **The state machine is sound.**
 - Downstream: no four-component-version (`3.2.6.1`) parsing problem anywhere — packaging, migration planner, `charter context`, `doctor provenance|channel|skills`, `profiles list`. A 2,701-test suite is green under it.
+
+⚠ **But you are on macOS and I was on Linux, so "covered" is weaker than it sounds.** The repair is in the scaffold-write and commit path, which is exactly where platform can differ — path handling, case sensitivity, file permissions, and `safe_commit`'s branch checks. **Re-running the two refusal probes on the Mac is worth the five minutes**, because a clean result there is genuinely new information rather than a repeat:
+
+```bash
+# in a throwaway kittified repo, on the protected branch
+spec-kitty specify task-list ; echo "exit=$?"        # expect exit 1, and NO kitty-specs/ entry
+git status --porcelain ; ls kitty-specs 2>/dev/null   # expect clean, expect absent
+```
 
 **Known and already reported, so don't re-file it:** every `spec-kitty-composed-*` prompt from `spec-kitty next` is a 4-line stub (`#3909`). Within one mission, `discovery` produced a real 143-line prompt while `specify` and `plan` produced stubs. The discriminator is the generation path, not the step. The **slash-command** path (`/spec-kitty.specify`, 864 lines, stamped `3.2.6.1`) is intact — that is why this is not a training blocker. Full report: `spec-kitty/spec-kitty#4070`.
 
