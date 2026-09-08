@@ -61,7 +61,8 @@
       "last_transition_at": "2026-09-08T21:23:13.990696+00:00",
       "model": "__resolved_model_absent__",
       "notes": [
-        "Architecture record + runbook ready"
+        "Architecture record + runbook ready",
+        "Review APPROVE; three minor findings folded in 91a87da7"
       ],
       "provider": "__resolved_provider_absent__",
       "review_result": {

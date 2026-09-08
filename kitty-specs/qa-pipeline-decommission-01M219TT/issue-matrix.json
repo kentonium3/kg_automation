@@ -37,7 +37,7 @@
       "wp": null
     },
     "#886": {
-      "evidence_ref": "kitty-specs/qa-pipeline-decommission-01M219TT/plan.md \u00a7Approach (teardown + expected_baselines gate); deploys/queued manifest (WP01)",
+      "evidence_ref": "kitty-specs/qa-pipeline-decommission-01M219TT/plan.md \u00a7Approach (teardown + expected_baselines gate); deploys/queued manifest (WP01) | WP01 b44528da+9e69438f, WP02 7f84b309+91a87da7, WP03 9e24a1e9+e0a9a896+1dba1a0c all approved",
       "fr": "FR-001,FR-002,FR-004,FR-007,FR-008",
       "nfr": "NFR-004",
       "repo": "kentonium3/kg-automation",
@@ -45,7 +45,7 @@
       "scope": "office2 QA-component removal ends the daily baseline-drift alert #886 tracked; inventory entries retired",
       "source_file": "spec.md",
       "title": "Infra: register spec-kitty-qa pipeline components (qa-register, dispatch webhook + Funnel) and stop the daily baseline-drift alert",
-      "verdict": "in-mission",
+      "verdict": "fixed",
       "wp": "WP01"
     },
     "#888": {
@@ -73,7 +73,7 @@
       "wp": null
     },
     "#970": {
-      "evidence_ref": "the mission itself: kitty-specs/qa-pipeline-decommission-01M219TT (spec/plan/WP01-03)",
+      "evidence_ref": "the mission itself: kitty-specs/qa-pipeline-decommission-01M219TT (spec/plan/WP01-03) | WP01 b44528da+9e69438f, WP02 7f84b309+91a87da7, WP03 9e24a1e9+e0a9a896+1dba1a0c all approved",
       "fr": "FR-001..FR-010",
       "nfr": "NFR-001..NFR-004",
       "repo": "kentonium3/kg-automation",
@@ -81,7 +81,7 @@
       "scope": "the mission's own tracking issue",
       "source_file": "spec.md",
       "title": "Infra: decommission QA Pipeline interim tenancy \u2014 remove qa-dispatch-webhook (public ingress), qa-register, and all QA traces from office2 + Mac",
-      "verdict": "in-mission",
+      "verdict": "fixed",
       "wp": "WP01"
     }
   },
