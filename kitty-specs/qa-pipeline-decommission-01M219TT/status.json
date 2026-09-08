@@ -1,7 +1,7 @@
 {
-  "event_count": 5,
-  "last_event_id": "01M21ASZCMXA92QP62Z3QT2J1A",
-  "materialized_at": "2026-09-08T20:19:30.323650+00:00",
+  "event_count": 7,
+  "last_event_id": "01M21AV25XRQ80N5K2WM2P0NS3",
+  "materialized_at": "2026-09-08T20:20:05.948055+00:00",
   "mission_number": "",
   "mission_slug": "qa-pipeline-decommission-01M219TT",
   "mission_type": "software-dev",
@@ -12,9 +12,9 @@
     "claimed": 0,
     "done": 0,
     "for_review": 0,
-    "in_progress": 1,
+    "in_progress": 2,
     "in_review": 0,
-    "planned": 2
+    "planned": 1
   },
   "work_packages": {
     "WP01": {
@@ -40,11 +40,19 @@
       "last_transition_at": "2026-09-08T20:18:28.823729+00:00"
     },
     "WP03": {
-      "actor": "finalize-tasks",
+      "actor": "claude",
+      "agent": "claude",
+      "agent_profile": "__resolved_profile_absent__",
+      "agent_profile_version": "__resolved_profile_version_absent__",
       "force_count": 0,
-      "lane": "planned",
-      "last_event_id": "01M21AR73YPFHER25YDPDH3ZGD",
-      "last_transition_at": "2026-09-08T20:18:32.702155+00:00"
+      "lane": "in_progress",
+      "last_event_id": "01M21AV25XRQ80N5K2WM2P0NS3",
+      "last_transition_at": "2026-09-08T20:20:05.948055+00:00",
+      "model": "__resolved_model_absent__",
+      "provider": "__resolved_provider_absent__",
+      "role": "implementer",
+      "shell_pid": 33138,
+      "shell_pid_created_at": "1788898801.738418"
     }
   }
 }
