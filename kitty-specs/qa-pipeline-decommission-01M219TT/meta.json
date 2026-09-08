@@ -23,6 +23,7 @@
   "purpose_context": "The spec-kitty QA Pipeline's interim tenancy on Kent's personal infrastructure is over: EXE.dev runs it end-to-end. This mission decommissions the office2 components (qa-dispatch-webhook - the host's only public ingress - and qa-register) with archive-first discipline, removes Mac scratch traces, and updates the architecture record. kentonium3/kg-automation#970.",
   "purpose_tldr": "Remove all QA Pipeline traces from office2 and the Mac now that EXE.dev owns the pipeline",
   "slug": "qa-pipeline-decommission-01M219TT",
+  "status_phase": "1",
   "target_branch": "feat/970-qa-decommission",
   "topology": "single_branch",
   "vcs": "git",
