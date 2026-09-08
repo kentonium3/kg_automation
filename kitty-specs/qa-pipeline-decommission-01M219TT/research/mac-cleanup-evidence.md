@@ -234,3 +234,25 @@ Protection snapshot (before): HEAD=abb5cf2844fb90956a72b63b5db35af92caa7917 stat
 - Definition of done status: M-01/M-02 are explicitly REFUSED-and-surfaced (the
   sanctioned alternative to pass per the WP), M-03..M-08 pass,
   `~/repos/spec-kitty-qa` provably untouched.
+
+---
+
+## Round 2 — operator-attested deletion (2026-09-08, same session)
+
+Kent reviewed the two M-08 refusals and attested both scratch histories
+disposable ("Delete both", AskUserQuestion answer, 2026-09-08). The script
+gained an explicit `--attest-delete <path>` override (scoped to the five named
+targets only; the guard still fires and is recorded, then overridden by the
+attestation). Dry-run reviewed, then executed:
+
+```
+bash scripts/decommission/mac/cleanup.sh \
+  --attest-delete ~/repos/teamspace-qa-scratch \
+  --attest-delete ~/repos/teamspace-qa-scratch2
+```
+
+Result: M-01 ABSENT, M-02 ABSENT (deleted under attestation; guard findings —
+no-remote unpushed history — recorded in the round-2 inventory), M-03..M-05
+ABSENT (unchanged), M-06 OK (4 non-QA entries still preserved), M-07
+clone_intact OK (HEAD abb5cf28…7917, status sha256 e3b0c4…b855 — identical
+across both rounds), M-08 OK. SUMMARY deleted=2 refused=0 already_absent=3.

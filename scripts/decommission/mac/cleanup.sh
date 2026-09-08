@@ -29,10 +29,12 @@ set -u
 # ---------------------------------------------------------------- arguments
 DRY_RUN=0
 INVENTORY_FILE=""
+ATTESTED=()  # paths the operator explicitly attested as disposable (guard override)
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY_RUN=1 ;;
     --inventory) shift; INVENTORY_FILE="${1:-}" ;;
+    --attest-delete) shift; ATTESTED+=("${1:?--attest-delete needs a path}") ;;
     *) echo "ERROR: unknown argument: $1" >&2; exit 1 ;;
   esac
   shift
@@ -155,10 +157,33 @@ for i in "${!TARGETS[@]}"; do
     fi
     DELETED+=("$t")
   else
-    log "TARGET $id $t: REFUSED — $reason"
-    inv "- git guard: FIRED — $reason"
-    inv "- decision: REFUSE (path left untouched; surfaced per M-08)"
-    REFUSED+=("$t :: $reason")
+    attested=0
+    for a in "${ATTESTED[@]+"${ATTESTED[@]}"}"; do
+      [ "$a" = "$t" ] && attested=1
+    done
+    if [ "$attested" -eq 1 ]; then
+      # Guard fired but the operator explicitly attested this exact named
+      # target as disposable (--attest-delete). Only the 5 named targets can
+      # ever reach this branch; the override never widens the target set.
+      log "TARGET $id $t: guard FIRED ($reason) — DELETING under operator attestation"
+      inv "- git guard: FIRED — $reason"
+      inv "- decision: DELETE under explicit operator attestation (--attest-delete)"
+      if [ "$DRY_RUN" -eq 1 ]; then
+        log "DRY-RUN: would rm -rf $t (attested)"
+      else
+        case "$t" in
+          "$HOME"/*) rm -rf "$t" ;;
+          *) log "INTERNAL ERROR: $t not under \$HOME — refusing"; REFUSED+=("$t :: not under HOME"); inv "- decision OVERRIDDEN: refused (not under HOME)"; inv ""; continue ;;
+        esac
+        log "DELETED (attested): $t"
+      fi
+      DELETED+=("$t")
+    else
+      log "TARGET $id $t: REFUSED — $reason"
+      inv "- git guard: FIRED — $reason"
+      inv "- decision: REFUSE (path left untouched; surfaced per M-08)"
+      REFUSED+=("$t :: $reason")
+    fi
   fi
   inv ""
 done
