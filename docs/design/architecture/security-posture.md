@@ -10,20 +10,24 @@ tags: [152, 575]
 ## Network Security
 
 - **Services bind to Tailscale IP** (`100.92.197.90`) unless fronted by Tailscale Serve, which allows `0.0.0.0` binding safely
-- **One service is exposed to the public internet** (corrected 2026-08-22; this line read
-  "No services exposed to the public internet (Tailscale Funnel is disabled)" and was false
-  from 2026-08-04): **Tailscale Funnel is ENABLED** on `office2` for
+- **ZERO services are exposed to the public internet** — effective when deploy manifest
+  `deploys/queued/0030-qa-pipeline-decommission.yaml` and its operator script apply (this doc
+  merges ahead of the deployer's tick; mission `qa-pipeline-decommission-01M219TT`, #970).
+  The host's only public ingress — **Tailscale Funnel** on
   `https://office2.tail0f5f56.ts.net:8443` → `127.0.0.1:3457`, the spec-kitty-qa
-  `qa-dispatch-webhook` (Linear dispatch). Interim — retired by #887. See
-  `data/network-topology.json` and #886.
-  - Consequence of Funnel that survives its retirement: `office2.tail0f5f56.ts.net` is now
-    resolvable in **public DNS** and recorded in **Certificate Transparency logs**, so the
-    host is publicly nameable and the tailnet name externally enumerable. CT entries are
-    permanent; turning Funnel off does not undo this.
-  - Ingress is authenticated: HMAC signature check (constant-time, fail-closed on missing
-    secret or header), replay guard on `webhookTimestamp`, actor-type check rejecting
-    bots/OAuth clients, and a fail-closed reviewer allowlist.
-- Every other service is tailnet-only
+  `qa-dispatch-webhook` (Linear dispatch, live 2026-08-04..2026-09-08, #886) — is retired:
+  the webhook is stopped and removed, and Kent's root-only operator script turns Funnel off
+  for `:8443` (the `:443` tailnet-only Serve to Vikunja is a different service and stays).
+  Verification is the tri-state `verify.sh` contract; see
+  [`qa-pipeline-decommission` runbook](<../../runbooks/qa-pipeline-decommission.md>).
+  - Residue that survives the retirement: `office2.tail0f5f56.ts.net` remains resolvable in
+    **public DNS** and recorded in **Certificate Transparency logs**, so the host is publicly
+    nameable and the tailnet name externally enumerable. CT entries are permanent; turning
+    Funnel off does not undo this.
+  - History: this bullet read "No services exposed to the public internet (Tailscale Funnel
+    is disabled)" and was false from 2026-08-04; corrected 2026-08-22 to record the one
+    Funnel ingress; restored to zero-ingress 2026-09-08 by #970.
+- Every service is tailnet-only
 - No port forwarding or NAT traversal outside Tailscale
 - Docker's default networking bypasses iptables/ufw — explicit IP binding is the primary control for non-Serve services
 

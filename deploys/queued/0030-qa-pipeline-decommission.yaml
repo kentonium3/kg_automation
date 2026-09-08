@@ -1,0 +1,46 @@
+schema_version: v1
+name: qa-pipeline-decommission
+mission_slug: qa-pipeline-decommission-01M219TT
+tier: 2
+entrypoint: scripts/deploy/deploy-qa-pipeline-decommission.sh
+audited_surface: true
+expected_baselines:
+  - listening-ports.txt
+  - docker-images.txt
+verification:
+  pre:
+    - test -f scripts/decommission/office2/teardown.sh
+    - test -f scripts/decommission/office2/operator-root-steps.sh
+    - test -f scripts/decommission/office2/verify.sh
+  post:
+    - test -f /data/services/host-state/decommission/qa-pipeline-2026-09-08/operator-complete.txt
+    - bash scripts/decommission/office2/verify.sh
+created_at: '2026-09-08T21:30:00Z'
+created_by: qa-pipeline-decommission-01M219TT
+notes: |
+  Decommissions the office2 QA pipeline (kentonium3/kg-automation#970):
+  qa-register docker DB (:8788), qa-dispatch-webhook (:3457, public Funnel
+  :8443), the launcher trio in ~claude, /data/services/qa-register/, and the
+  /home/claude/spec-kitty-qa/ code copy. Archive-first (C-003): the entrypoint
+  builds a verified sha256 bundle at
+  /data/services/host-state/decommission/qa-pipeline-2026-09-08/ (inside the
+  Restic source set) BEFORE any removal, and copies the operator + verify
+  scripts there.
+
+  DELIBERATE GATE: verification.post FAILS every tick until Kent runs the
+  root-only half (ssh office2-kgale, then
+  sudo bash <bundle>/operator-root-steps.sh — archives + removes
+  /etc/qa-webhook.env, turns Funnel off for :8443 only, writes
+  operator-complete.txt) AND verify.sh exits 0 (tri-state contract, all
+  removal checks ABSENT, zero UNCHECKABLE). teardown.sh is idempotent, so the
+  per-tick re-run while the gate is open is a no-op; the per-tick failure
+  alert until the operator acts is a known, accepted cost (plan step 7). Only
+  when the gate passes is the deploy recorded applied and the deferred
+  rebaseline stamped.
+
+  Tier 2: removes application state (SQLite DB, service env) — recent Restic
+  snapshot enforced before apply, and the pre-teardown state enters a snapshot.
+
+  expected_baselines: the port closures (:8443 v4+v6, :3457, :8788) and the
+  qa-register image removal drift listening-ports.txt and docker-images.txt
+  with NO repo-file signal (#685 caveat), so they are declared here.

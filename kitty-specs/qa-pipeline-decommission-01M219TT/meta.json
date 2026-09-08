@@ -17,7 +17,7 @@
   "flattened": false,
   "friendly_name": "QA Pipeline decommission",
   "mission_id": "01M219TT1KVFKQZCBRFG72PYGR",
-  "mission_number": null,
+  "mission_number": 114,
   "mission_slug": "qa-pipeline-decommission-01M219TT",
   "mission_type": "software-dev",
   "purpose_context": "The spec-kitty QA Pipeline's interim tenancy on Kent's personal infrastructure is over: EXE.dev runs it end-to-end. This mission decommissions the office2 components (qa-dispatch-webhook - the host's only public ingress - and qa-register) with archive-first discipline, removes Mac scratch traces, and updates the architecture record. kentonium3/kg-automation#970.",

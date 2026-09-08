@@ -74,15 +74,20 @@ new workloads, and the constraints that follow.
 
 ## Network
 
-All inter-device communication uses **Tailscale**. **One service is exposed to the public
-internet** — the spec-kitty-qa `qa-dispatch-webhook`, via Tailscale Funnel on `:8443`
-(interim, since 2026-08-04; retired by #887). Every other service is tailnet-only. No port
-forwarding or NAT traversal outside Tailscale. (This paragraph asserted no public exposure at
-all until 2026-08-22 — corrected per #886.)
+All inter-device communication uses **Tailscale**. **No service is exposed to the public
+internet** — effective when deploy manifest 0030 and its operator script apply: the one
+exception, the spec-kitty-qa `qa-dispatch-webhook` behind Tailscale Funnel on `:8443`
+(live 2026-08-04..2026-09-08, #886), was retired by mission
+`qa-pipeline-decommission-01M219TT` (#970), which turns the Funnel off. Every service is
+tailnet-only. No port forwarding or NAT traversal outside Tailscale. (This paragraph
+asserted no public exposure until 2026-08-22 — corrected per #886 while the Funnel was
+live — and returned to zero public exposure per #970.)
 
 **Tailscale Serve**: Port 443 on the `tailscale0` interface proxies to `100.92.197.90:3456` (Vikunja). TLS is terminated by Tailscale with auto-provisioned Let's Encrypt certificates. Access to
-this `:443` Serve is tailnet-only. **Funnel is separately ENABLED on `:8443`** →
-`127.0.0.1:3457` (`qa-dispatch-webhook`), which is public-internet reachable.
+this `:443` Serve is tailnet-only. (A separate Funnel on `:8443` →
+`127.0.0.1:3457` was public-internet reachable 2026-08-04..2026-09-08 for the
+`qa-dispatch-webhook`; retired by #970 — the operator script turns it off, leaving
+this `:443` Serve as the only Tailscale-fronted listener.)
 
 **SSH access:**
 - Agents: `ssh office2-claude` (claude user, no sudo)
