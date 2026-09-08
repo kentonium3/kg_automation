@@ -147,15 +147,17 @@ def _entry_env(tmp_path, bin_dir):
 
 
 def test_entrypoint_refuses_to_overwrite_diverged_bundle_copy(tmp_path):
-    """Copy-once (post-merge Codex finding 1): a bundled script that differs
-    from the repo copy is never silently overwritten — the entrypoint dies
-    loudly before running any teardown step."""
+    """Copy-once (post-merge Codex finding 1, amended after the first live
+    apply failure): once operator-complete.txt exists the frozen bundled
+    scripts are never silently overwritten — the entrypoint dies loudly
+    before running any teardown step."""
     bin_dir = tmp_path / "bin"
     bin_dir.mkdir()
     bundle = tmp_path / "bundle"
     bundle.mkdir()
     frozen = "#!/bin/sh\necho frozen bundle copy — deliberately divergent\n"
     (bundle / "verify.sh").write_text(frozen)
+    (bundle / "operator-complete.txt").write_text("done\n")
 
     proc = subprocess.run(
         ["bash", str(ENTRYPOINT), "--apply"],
@@ -167,6 +169,29 @@ def test_entrypoint_refuses_to_overwrite_diverged_bundle_copy(tmp_path):
     # The frozen copy is untouched and teardown never started.
     assert (bundle / "verify.sh").read_text() == frozen
     assert "step1" not in proc.stdout
+
+
+def test_entrypoint_refreshes_diverged_copy_before_operator_completion(tmp_path):
+    """Before operator-complete.txt exists, a diverged repo script is a
+    legitimate fix (e.g. after a failed first apply): the entrypoint refreshes
+    the bundled copy instead of wedging the deploy, and says so."""
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    bundle = tmp_path / "bundle"
+    bundle.mkdir()
+    stale = "#!/bin/sh\necho stale pre-fix bundle copy\n"
+    (bundle / "verify.sh").write_text(stale)
+
+    proc = subprocess.run(
+        ["bash", str(ENTRYPOINT), "--apply"],
+        capture_output=True, text=True,
+        env=_entry_env(tmp_path, bin_dir), cwd=str(REPO_ROOT),
+    )
+    # The refresh happens before teardown runs; teardown itself may fail in
+    # this stub environment — only the refresh behavior is under test.
+    assert "refreshed bundled verify.sh" in proc.stdout
+    repo_copy = (REPO_ROOT / "scripts" / "decommission" / "office2" / "verify.sh").read_text()
+    assert (bundle / "verify.sh").read_text() == repo_copy
 
 
 def test_entrypoint_copies_once_then_noops_when_identical(tmp_path):

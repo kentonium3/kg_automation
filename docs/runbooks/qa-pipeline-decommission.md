@@ -165,6 +165,19 @@ follows the existing GFS policy; the bundle is deliberately *not* pruned
 separately. Keep the on-disk bundle at operator discretion once B-03 has
 confirmed snapshot coverage.
 
+## Delegated root archives (added after the first live apply)
+
+`/data/services/qa-register/` holds files claude cannot read (the 0600
+`register.pre-005-*` trio, kgale-owned `service.env`), and the directory itself
+is not writable by claude. `teardown.sh` therefore archives only what it can
+read, records the rest in the bundle's `root-archive-needed.txt`, and leaves
+the directory in place. `operator-root-steps.sh` archives every delegated file
+into the bundle under `ROOT-MANIFEST.txt`, verifies them, and then removes
+`/data/services/qa-register/` — so V-08 goes ABSENT only after the operator
+runs, which the manifest gate already waits for. The entrypoint's frozen
+bundled scripts may be refreshed by a repo-side fix **until**
+`operator-complete.txt` exists; after that, divergence is refused loudly.
+
 ## Related records
 
 Signal-to-doc-map targets reviewed and left unchanged (verified QA-free):

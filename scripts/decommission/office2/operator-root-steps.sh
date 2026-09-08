@@ -64,6 +64,39 @@ else
   log "WARNING: $ENV_SRC absent and no archived copy — nothing to archive"
 fi
 
+# --- step 1b: archive claude-unreadable files delegated by teardown.sh -------
+# teardown.sh records files it cannot read (root/kgale-owned live state, e.g.
+# the 0600 register.pre-005-* trio and service.env) in root-archive-needed.txt.
+# Archive each into the bundle (perms preserved) under ROOT-MANIFEST.txt, then
+# remove the service directory — claude cannot delete entries from it either
+# (kgale-owned, mode 755), so its removal is delegated here too.
+SERVICE_DIR="${QA_OPERATOR_SERVICE_DIR:-/data/services/qa-register}"
+DELEGATED="$BUNDLE/root-archive-needed.txt"
+if [ -f "$DELEGATED" ] && [ -s "$DELEGATED" ]; then
+  while IFS="$(printf '\t')" read -r src dstbase; do
+    [ -n "$src" ] || continue
+    if [ -f "$src" ]; then
+      if [ ! -f "$BUNDLE/$dstbase" ]; then
+        install -m 0600 -o root -g root "$src" "$BUNDLE/$dstbase"
+        log "archived delegated $src -> $BUNDLE/$dstbase (0600 root)"
+      fi
+      manifest_has "$dstbase" || manifest_add "$dstbase"
+      ( cd "$BUNDLE" && grep "  $dstbase\$" ROOT-MANIFEST.txt | sha256sum -c --quiet - ) \
+        || die "archived $dstbase does not verify — NOT removing anything"
+    elif [ -f "$BUNDLE/$dstbase" ]; then
+      log "delegated $src already removed; archived copy present (no-op)"
+      manifest_has "$dstbase" || manifest_add "$dstbase"
+    else
+      die "delegated file $src is gone and NOT archived — refusing to continue"
+    fi
+  done < "$DELEGATED"
+fi
+if [ -e "$SERVICE_DIR" ]; then
+  # Only after every delegated file is archived-and-verified above.
+  rm -rf "$SERVICE_DIR"
+  log "removed $SERVICE_DIR (delegated removal — claude lacks write on it)"
+fi
+
 # --- step 2: capture current funnel config (first run only) ------------------
 if [ ! -f "$BUNDLE/funnel-config-before.json" ]; then
   tailscale funnel status --json > "$BUNDLE/funnel-config-before.json"

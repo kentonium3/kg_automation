@@ -111,8 +111,29 @@ fi
 mkdir -p "$BUNDLE"
 COPIED=0
 
+# Files claude cannot read (root/kgale-owned live state, e.g. the 0600
+# register.pre-005-* trio and service.env — measured 2026-09-08) are DELEGATED
+# to the operator root script: their paths are recorded in
+# root-archive-needed.txt and operator-root-steps.sh archives them into the
+# bundle under ROOT-MANIFEST.txt before removing the service dir.
+DELEGATED="$BUNDLE/root-archive-needed.txt"
+: > "$DELEGATED.tmp"
+
 archive_file() {  # src dst-basename
   local src="$1" dst="$BUNDLE/$2"
+  if [ -e "$src" ] && [ ! -r "$src" ]; then
+    # Unreadable by claude — delegate to the operator (root) script. If the
+    # operator already archived it, ROOT-MANIFEST.txt attests it; we cannot
+    # hash-compare an unreadable file, so we only record the delegation.
+    printf '%s\t%s\n' "$src" "$2" >> "$DELEGATED.tmp"
+    log "step2: DELEGATED to operator (unreadable by claude): $src"
+    return 0
+  fi
+  if [ -e "$dst" ] && [ ! -r "$dst" ]; then
+    # Bundle copy exists but is root-owned (operator archived it) — nothing
+    # for claude to do or verify here; ROOT-MANIFEST.txt covers it.
+    return 0
+  fi
   if [ -e "$dst" ]; then
     # Skip-if-exists is only safe when the live source (if still present)
     # matches the archived copy byte-for-byte. Across deployer retry ticks a
@@ -144,6 +165,13 @@ for src in "$SERVICE_DIR"/register.pre-005-*; do
 done
 archive_file "$CLAUDE_HOME/start-webhook.sh" "start-webhook.sh"
 archive_file "$CLAUDE_HOME/qa-webhook.log" "qa-webhook.log"
+
+# Publish the delegation list atomically (regenerated every run; the operator
+# script consumes it). Empty file = nothing delegated.
+mv "$DELEGATED.tmp" "$DELEGATED"
+if [ -s "$DELEGATED" ]; then
+  log "step2: $(wc -l < "$DELEGATED" | tr -d ' ') file(s) delegated to the operator script (see root-archive-needed.txt)"
+fi
 
 if [ -d "$CODE_DIR" ] && [ ! -e "$BUNDLE/spec-kitty-qa-copy.tar.gz" ]; then
   log "step2: tarring $CODE_DIR"
@@ -186,7 +214,9 @@ claude_bundle_files() {
              service.env start-webhook.sh qa-webhook.log \
              spec-kitty-qa-copy.tar.gz qa-register-image.tar \
              qa-register-inspect.json; do
-      [ -e "$f" ] && printf '%s\n' "$f"
+      # Only claude-READABLE entries: a root-archived (0600 root) bundle file
+      # belongs to ROOT-MANIFEST.txt, and sha256sum on it would fail here.
+      [ -e "$f" ] && [ -r "$f" ] && printf '%s\n' "$f"
     done
     true )
 }
@@ -290,8 +320,17 @@ else
 fi
 
 if [ -e "$SERVICE_DIR" ]; then
-  log "step6: removing $SERVICE_DIR"
-  rm -rf "$SERVICE_DIR"
+  if [ -w "$SERVICE_DIR" ]; then
+    log "step6: removing $SERVICE_DIR"
+    rm -rf "$SERVICE_DIR"
+  else
+    # Directory is not writable by claude (kgale/root-owned — measured
+    # 2026-09-08): its removal is DELEGATED to operator-root-steps.sh, which
+    # archives the unreadable entries and then removes the directory. V-08
+    # stays PRESENT until the operator runs; the manifest gate already waits
+    # for operator-complete.txt, so this is the designed sequence, not a skip.
+    log "step6: $SERVICE_DIR not writable by claude — removal DELEGATED to operator-root-steps.sh"
+  fi
 fi
 if [ -e "$CODE_DIR" ]; then
   log "step6: removing $CODE_DIR"

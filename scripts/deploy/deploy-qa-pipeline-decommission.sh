@@ -46,12 +46,19 @@ fi
 mkdir -p "$BUNDLE"
 for f in teardown.sh operator-root-steps.sh verify.sh; do
   if [ -e "$BUNDLE/$f" ]; then
-    # Copy-once: the bundled copy is frozen. A diverged repo copy on a retry
-    # tick must never silently replace it — die loudly instead.
     if ! cmp -s "$SRC_DIR/$f" "$BUNDLE/$f"; then
-      echo "ERROR: bundled $f differs from repo copy $SRC_DIR/$f —" \
-           "refusing to overwrite the frozen bundle copy; reconcile deliberately" >&2
-      exit 1
+      if [ -e "$BUNDLE/operator-complete.txt" ]; then
+        # The freeze protects gate integrity once the operator has consumed
+        # the bundled copies: after operator-complete.txt exists, a diverged
+        # repo copy must never silently replace them — die loudly instead.
+        echo "ERROR: bundled $f differs from repo copy $SRC_DIR/$f after" \
+             "operator completion — refusing to overwrite; reconcile deliberately" >&2
+        exit 1
+      fi
+      # Before operator completion, a repo-side fix (e.g. a failed first
+      # apply) legitimately updates the bundle — refresh and say so.
+      cp -p "$SRC_DIR/$f" "$BUNDLE/$f"
+      echo "refreshed bundled $f (pre-operator fix window)"
     fi
   else
     cp -p "$SRC_DIR/$f" "$BUNDLE/$f"
