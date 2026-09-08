@@ -1,7 +1,43 @@
 {
   "rows": {
+    "#492": {
+      "evidence_ref": "contextual precedent citation only; closed prior work, nothing owed by this mission",
+      "fr": null,
+      "nfr": null,
+      "repo": "kentonium3/kg-automation",
+      "sc": null,
+      "scope": "cited as precedent in plan.md/research.md/WP prompts; no deliverable in this mission",
+      "source_file": "plan.md",
+      "title": "Bug: spec-kitty lane base ignores WP-level dependencies (navigation-docs precedent)",
+      "verdict": "verified-already-fixed",
+      "wp": null
+    },
+    "#685": {
+      "evidence_ref": "contextual precedent citation only; closed prior work, nothing owed by this mission",
+      "fr": null,
+      "nfr": null,
+      "repo": "kentonium3/kg-automation",
+      "sc": null,
+      "scope": "cited as precedent in plan.md/research.md/WP prompts; no deliverable in this mission",
+      "source_file": "plan.md",
+      "title": "Bug: felix-deployer auto-rebaseline observe-range gap (expected_baselines caveat precedent)",
+      "verdict": "verified-already-fixed",
+      "wp": null
+    },
+    "#712": {
+      "evidence_ref": "contextual precedent citation only; closed prior work, nothing owed by this mission",
+      "fr": null,
+      "nfr": null,
+      "repo": "kentonium3/kg-automation",
+      "sc": null,
+      "scope": "cited as precedent in plan.md/research.md/WP prompts; no deliverable in this mission",
+      "source_file": "plan.md",
+      "title": "Canary day-1 findings: retired-service health_check suppression precedent",
+      "verdict": "verified-already-fixed",
+      "wp": null
+    },
     "#886": {
-      "evidence_ref": "kitty-specs/qa-pipeline-decommission-01M219TT/plan.md §Approach (teardown + expected_baselines gate); deploys/queued manifest (WP01)",
+      "evidence_ref": "kitty-specs/qa-pipeline-decommission-01M219TT/plan.md \u00a7Approach (teardown + expected_baselines gate); deploys/queued manifest (WP01)",
       "fr": "FR-001,FR-002,FR-004,FR-007,FR-008",
       "nfr": "NFR-004",
       "repo": "kentonium3/kg-automation",
@@ -9,6 +45,42 @@
       "scope": "office2 QA-component removal ends the daily baseline-drift alert #886 tracked; inventory entries retired",
       "source_file": "spec.md",
       "title": "Infra: register spec-kitty-qa pipeline components (qa-register, dispatch webhook + Funnel) and stop the daily baseline-drift alert",
+      "verdict": "in-mission",
+      "wp": "WP01"
+    },
+    "#888": {
+      "evidence_ref": "contextual precedent citation only; closed prior work, nothing owed by this mission",
+      "fr": null,
+      "nfr": null,
+      "repo": "kentonium3/kg-automation",
+      "sc": null,
+      "scope": "cited as precedent in plan.md/research.md/WP prompts; no deliverable in this mission",
+      "source_file": "plan.md",
+      "title": "restic key path fix / source-set documentation precedent",
+      "verdict": "verified-already-fixed",
+      "wp": null
+    },
+    "#895": {
+      "evidence_ref": "contextual precedent citation only; closed prior work, nothing owed by this mission",
+      "fr": null,
+      "nfr": null,
+      "repo": "kentonium3/kg-automation",
+      "sc": null,
+      "scope": "cited as precedent in plan.md/research.md/WP prompts; no deliverable in this mission",
+      "source_file": "plan.md",
+      "title": "Infra: crontab capture into /data/services/host-state (archive-destination precedent)",
+      "verdict": "verified-already-fixed",
+      "wp": null
+    },
+    "#970": {
+      "evidence_ref": "the mission itself: kitty-specs/qa-pipeline-decommission-01M219TT (spec/plan/WP01-03)",
+      "fr": "FR-001..FR-010",
+      "nfr": "NFR-001..NFR-004",
+      "repo": "kentonium3/kg-automation",
+      "sc": "SC-001..SC-006",
+      "scope": "the mission's own tracking issue",
+      "source_file": "spec.md",
+      "title": "Infra: decommission QA Pipeline interim tenancy \u2014 remove qa-dispatch-webhook (public ingress), qa-register, and all QA traces from office2 + Mac",
       "verdict": "in-mission",
       "wp": "WP01"
     }
