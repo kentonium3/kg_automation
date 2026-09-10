@@ -9,7 +9,7 @@ version: v1.0
 
 # Spec-Kitty Upstream Issue Comment Template
 
-Slim template for **commenting on an EXISTING upstream issue** (`Priivacy-ai/spec-kitty`,
+Slim template for **commenting on an EXISTING upstream issue** (`spec-kitty/spec-kitty`,
 openai/codex, etc.) — as opposed to filing a *new* bug report (that is the
 [external bug-report template](<./spec-kitty-bug-report-external-template.md>)). Use this
 when we need to add to an issue that is already open: confirm the bug still reproduces,

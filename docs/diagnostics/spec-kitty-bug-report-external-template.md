@@ -10,7 +10,7 @@ version: v1.2
 # Spec-Kitty External Bug Report Template
 
 Slim template for submitting bug reports to upstream tool projects
-(`Priivacy-ai/spec-kitty`, openai/codex, etc.). Internal status tracking
+(`spec-kitty/spec-kitty`, openai/codex, etc.). Internal status tracking
 happens in a kg-automation GitHub issue (see
 [`runbooks/spec-kitty-bug-reporting.md`](<../runbooks/spec-kitty-bug-reporting.md>));
 this template is the source for the paste buffer that goes into the

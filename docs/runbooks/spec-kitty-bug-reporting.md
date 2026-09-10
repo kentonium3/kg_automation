@@ -97,12 +97,12 @@ once for reference in the internal issue, but the short form is the identifier e
                         title AND the embedded draft body in the internal
                         issue, BEFORE the upstream filing step. Never file
                         upstream on the agent's own initiative.
-6. FILE UPSTREAM        gh issue create --repo Priivacy-ai/spec-kitty
+6. FILE UPSTREAM        gh issue create --repo spec-kitty/spec-kitty
                         --title "<approved title>" --body-file <(extract the
                         embedded draft from the internal issue + fill the
                         Submission approved date with today).
 7. CROSS-LINK           Comment on the kg-automation issue with the
-                        "Filed upstream: Priivacy-ai/spec-kitty#NNNN" line +
+                        "Filed upstream: spec-kitty/spec-kitty#NNNN" line +
                         filing-date + label transitions. Apply the
                         upstream-filed label. No separate diagnostic snapshot
                         file needed (the internal issue is the snapshot).
@@ -163,7 +163,7 @@ issues; new bug filings should NOT generate one.
 
 - One-off errors that didn't reproduce after investigation
 - User error (misused flag, wrong working directory)
-- Feature requests or enhancements — file those as proposals on Priivacy-ai/spec-kitty directly
+- Feature requests or enhancements — file those as proposals on spec-kitty/spec-kitty directly (use the upstream enhancement_request template)
 
 ## Required evidence
 

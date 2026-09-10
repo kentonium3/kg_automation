@@ -109,5 +109,5 @@ YYYY-MM-DD by {name/agent} during {feature or workflow context}.
 
 <!--
 Populate when filed and apply the upstream-filed label:
-Upstream: Priivacy-ai/spec-kitty#NNNN (or other upstream repo)
+Upstream: spec-kitty/spec-kitty#NNNN (or other upstream repo)
 -->
